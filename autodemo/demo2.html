@@ -41,37 +41,16 @@
     <div class="kpi"><b>0<em>条</em></b><i>漏接线索</i></div>
   </div>
 
-  <div class="pipeline" id="pipe2">
-    <div class="node" data-step="1">
-      <span class="n-port n-port-l"></span>
-      <span class="n-ic"><svg viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="17" rx="1.8"/><path d="M8.5 9h7M8.5 13h7M8.5 17h4"/></svg></span>
-      <span class="n-body"><b>表单提交</b><i>webhook 实时触发</i></span>
-      <span class="n-read" data-read="1">待命</span>
-      <span class="n-port n-port-r"></span>
+  <!-- 工作流画布（节点/连线由 main.js 按图数据渲染） -->
+  <div class="cnv-wrap">
+    <div class="cnv-bar">
+      <span class="cv-t">工作流结构</span>
+      <span class="cv-m">12 节点 · 1 分支 · v2.1</span>
     </div>
-    <span class="wire"><span class="wire-dot"></span></span>
-    <div class="node" data-step="2">
-      <span class="n-port n-port-l"></span>
-      <span class="n-ic"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.5" ry="2.8"/><path d="M4.5 6v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V6"/><path d="M4.5 12v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/></svg></span>
-      <span class="n-body"><b>清洗入库</b><i>脱敏 · 补全字段</i></span>
-      <span class="n-read" data-read="2">待命</span>
-      <span class="n-port n-port-r"></span>
-    </div>
-    <span class="wire"><span class="wire-dot"></span></span>
-    <div class="node" data-step="3">
-      <span class="n-port n-port-l"></span>
-      <span class="n-ic"><svg viewBox="0 0 24 24"><path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9L12 3.5z"/><path d="M18.5 16.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/></svg></span>
-      <span class="n-body"><b>AI 生成回复</b><i>引用报价单 · 可审核</i></span>
-      <span class="n-read" data-read="3">待命</span>
-      <span class="n-port n-port-r"></span>
-    </div>
-    <span class="wire"><span class="wire-dot"></span></span>
-    <div class="node" data-step="4">
-      <span class="n-port n-port-l"></span>
-      <span class="n-ic"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="1.8"/><path d="M3.8 7l8.2 6 8.2-6"/></svg></span>
-      <span class="n-body"><b>发送客户</b><i>邮件 + 企微通知你</i></span>
-      <span class="n-read" data-read="4">待命</span>
-      <span class="n-port n-port-r"></span>
+    <div class="cnv-hint">← 左右滑动看完整流程</div>
+    <div class="cnv-scroll" data-cnv="d2">
+      <div class="cnv" data-cnv="d2" id="canvas-d2" role="img"
+           aria-label="表单自动回复工作流：表单提交、校验字段、查重、IF 新线索、AI 生成回复、发送邮件、企微通知、写入 CRM、标记待跟进、记录耗时，另含合并线索分支"></div>
     </div>
   </div>
 
@@ -102,6 +81,21 @@
         <div class="lb-row"><span class="lb-t">今天 14:20</span><span class="lb-n">李**</span><span class="lb-s">¥89 批发询价 · 300 个</span><span class="lb-ok">已回复</span></div>
         <div class="lb-row"><span class="lb-t">昨天 22:47</span><span class="lb-n">张**</span><span class="lb-s">样品申请 · 顺丰到付</span><span class="lb-ok">已回复</span></div>
       </div>
+
+      <!-- AI 依据：写了哪几行、边界在哪（买家最怕 AI 瞎报价） -->
+      <div class="aibasis">
+        <div class="ai-h"><span>AI 依据 · 引用报价单</span><b>#<span data-today-ymd>--</span></b></div>
+        <ul class="ai-list">
+          <li><em>§2.1</em><span>500 个起批价 ¥89/个（含基础包装）</span></li>
+          <li><em>§2.3</em><span>1,000 个以上 ¥82/个</span></li>
+          <li><em>§4.2</em><span>样品免费寄送 · 顺丰到付 · 3 个工作日出货</span></li>
+        </ul>
+        <div class="ai-gate">
+          <span class="ag-t">首次合作且金额 &gt; ¥5 万，先转人工确认</span>
+          <button class="ag-sw is-on" id="gateSwitch" type="button" role="switch" aria-checked="true" aria-label="大额询价转人工"></button>
+        </div>
+        <p class="ag-note" id="gateNote">已开启 · 大额询价先转人工，AI 不直接回价</p>
+      </div>
     </div>
 
     <!-- 右：回复邮件 -->
@@ -113,7 +107,7 @@
       <div class="speedup" id="speedup" style="display:none">
         <div class="sp-item"><b class="mono">4 小时</b><i>人工回复平均等待</i></div>
         <span class="sp-arrow">→</span>
-        <div class="sp-item sp-ok"><b class="mono" id="spAuto">3 分钟</b><i>这套流程</i></div>
+        <div class="sp-item sp-ok"><b class="mono" id="spAuto">3 秒</b><i>这套流程</i></div>
       </div>
       <div class="mail" id="mailCard" style="display:none">
         <div class="mail-head">
@@ -122,12 +116,18 @@
           <div class="mh-row"><span class="mh-k">收件人</span><span class="mh-v mono" id="mailTo">—</span></div>
         </div>
         <div class="mail-body" id="mailBody"></div>
-        <div class="mail-foot">客户 3 分钟内收到 · 同时企微通知你跟进</div>
+        <div class="mail-foot">客户 3 秒内收到 · 同时企微通知你跟进</div>
+      </div>
+      <div class="silent" id="silent2" style="display:none">
+        <div class="sl-top"><span class="sl-dot"></span><span class="sl-t">命中已有线索 · 未重复回复</span></div>
+        <p class="sl-p">这位客户 3 天前问过同一款产品，本次自动合并到原线索——同一客户不会收到两封报价，两个销售也不会同时跟进。</p>
+        <p class="sl-m">SKIPPED · 0 封邮件 · 线索已合并</p>
       </div>
       <div class="result-empty" id="empty2">
         <svg viewBox="0 0 24 24" class="re-ic"><rect x="3" y="5.5" width="18" height="13" rx="1.8"/><path d="M3.8 7l8.2 6 8.2-6"/></svg>
         <p>运行后，回复邮件会出现在这里</p>
       </div>
+      <p class="panel-note">正文由 AI 按报价单起草 · 口吻、报价边界、转人工规则都能按你的习惯调</p>
     </div>
   </div>
 
@@ -140,6 +140,35 @@
     <div class="console-body" id="clog2">
       <div class="log-line log-dim">等待运行 · 点击下方按钮或滚动到此处自动执行</div>
     </div>
+  </div>
+
+  <!-- 执行历史（点任意一条回放） -->
+  <div class="runhist" id="hist2">
+    <div class="rh-head"><span class="rh-t">执行历史</span><span class="rh-m">点任意一条回放</span></div>
+    <button class="rh-row is-sel" type="button" data-run="0">
+      <span class="rh-d"><span data-today-md>--</span> <span data-now-hm>--</span></span>
+      <span class="rh-s">正常 · 12 节点全部通过</span>
+      <span class="rh-tm">2.7s</span>
+      <span class="rh-bg rh-ok">SUCCESS</span>
+    </button>
+    <button class="rh-row" type="button" data-run="1">
+      <span class="rh-d"><span data-daysago="1">--</span> 22:47</span>
+      <span class="rh-s">命中重复线索 · 合并未回复</span>
+      <span class="rh-tm">0.9s</span>
+      <span class="rh-bg rh-skip">SKIPPED</span>
+    </button>
+    <button class="rh-row" type="button" data-run="0">
+      <span class="rh-d"><span data-daysago="2">--</span> 09:12</span>
+      <span class="rh-s">正常 · 报价单 v3 已同步</span>
+      <span class="rh-tm">2.8s</span>
+      <span class="rh-bg rh-ok">SUCCESS</span>
+    </button>
+    <button class="rh-row" type="button" data-run="0">
+      <span class="rh-d"><span data-daysago="3">--</span> 18:05</span>
+      <span class="rh-s">正常 · 客户只留手机号，改走短信</span>
+      <span class="rh-tm">3.1s</span>
+      <span class="rh-bg rh-ok">SUCCESS</span>
+    </button>
   </div>
 
   <div class="demo-bar">

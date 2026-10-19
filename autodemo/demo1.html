@@ -41,38 +41,16 @@
     <div class="kpi"><b>11.4<em>小时</em></b><i>本月省下人工</i></div>
   </div>
 
-  <!-- 节点流程图 -->
-  <div class="pipeline" id="pipe1">
-    <div class="node" data-step="1">
-      <span class="n-port n-port-l"></span>
-      <span class="n-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.6V12l3.2 2"/></svg></span>
-      <span class="n-body"><b>定时触发</b><i>每天 09:00</i></span>
-      <span class="n-read" data-read="1">待命</span>
-      <span class="n-port n-port-r"></span>
+  <!-- 工作流画布（节点/连线由 main.js 按图数据渲染） -->
+  <div class="cnv-wrap">
+    <div class="cnv-bar">
+      <span class="cv-t">工作流结构</span>
+      <span class="cv-m">13 节点 · 2 分支 · v1.4</span>
     </div>
-    <span class="wire"><span class="wire-dot"></span></span>
-    <div class="node" data-step="2">
-      <span class="n-port n-port-l"></span>
-      <span class="n-ic"><svg viewBox="0 0 24 24"><path d="M12 3.5v10.5m0 0 3.8-3.8M12 14l-3.8-3.8"/><path d="M4.5 17.5v1.5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-1.5"/></svg></span>
-      <span class="n-body"><b>抓取竞品页</b><i>竞品 A · 竞品 B</i></span>
-      <span class="n-read" data-read="2">待命</span>
-      <span class="n-port n-port-r"></span>
-    </div>
-    <span class="wire"><span class="wire-dot"></span></span>
-    <div class="node" data-step="3">
-      <span class="n-port n-port-l"></span>
-      <span class="n-ic"><svg viewBox="0 0 24 24"><path d="M4 5.5h16l-6 7v5.2a1 1 0 0 1-1.6.8l-2-1.6a1 1 0 0 1-.4-.8v-3.6l-6-7z"/></svg></span>
-      <span class="n-body"><b>清洗比价</b><i>对齐 SKU · 去重</i></span>
-      <span class="n-read" data-read="3">待命</span>
-      <span class="n-port n-port-r"></span>
-    </div>
-    <span class="wire"><span class="wire-dot"></span></span>
-    <div class="node" data-step="4">
-      <span class="n-port n-port-l"></span>
-      <span class="n-ic"><svg viewBox="0 0 24 24"><path d="M20.5 3.5 10.8 13.2m0 0H15m-4.2 0H8.5L3.5 20.5"/><path d="M20.5 3.5 13 11"/></svg></span>
-      <span class="n-body"><b>推送日报</b><i>企微 · 钉钉 · 邮件</i></span>
-      <span class="n-read" data-read="4">待命</span>
-      <span class="n-port n-port-r"></span>
+    <div class="cnv-hint">← 左右滑动看完整流程</div>
+    <div class="cnv-scroll" data-cnv="d1">
+      <div class="cnv" data-cnv="d1" id="canvas-d1" role="img"
+           aria-label="竞品价格监控日报工作流：定时触发、抓取竞品 A、解析 8 条、抓取竞品 B、解析 6 条、合并去重、IF 变动判定、AI 生成日报、推送企微、写入记录，另含超时重试与跳过推送两条分支"></div>
     </div>
   </div>
 
@@ -126,6 +104,11 @@
           <p class="cb-foot">完整 4 商品比价表已生成，点击查看</p>
         </div>
       </div>
+      <div class="silent" id="silent1" style="display:none">
+        <div class="sl-top"><span class="sl-dot"></span><span class="sl-t">本次无变动 · 未推送</span></div>
+        <p class="sl-p">4 个 SKU 全部持平（判定线：变动 ≥ ¥5 才推送）。群里没人被打扰，这次不生成日报。</p>
+        <p class="sl-m">09:00 · SKIPPED · 0 条消息</p>
+      </div>
       <div class="result-empty" id="empty1">
         <svg viewBox="0 0 24 24" class="re-ic"><path d="M21.5 3.5 10.8 14.2m0 0H15m-4.2 0H8.5L3.5 20.5"/><path d="M21.5 3.5 14 11"/></svg>
         <p>运行后，日报会推送到这里</p>
@@ -143,6 +126,35 @@
     <div class="console-body" id="clog1">
       <div class="log-line log-dim">等待运行 · 点击下方按钮或滚动到此处自动执行</div>
     </div>
+  </div>
+
+  <!-- 执行历史（点任意一条回放） -->
+  <div class="runhist" id="hist1">
+    <div class="rh-head"><span class="rh-t">执行历史</span><span class="rh-m">点任意一条回放</span></div>
+    <button class="rh-row is-sel" type="button" data-run="0">
+      <span class="rh-d"><span data-today-md>--</span> 09:00</span>
+      <span class="rh-s">正常 · 13 节点全部通过</span>
+      <span class="rh-tm">3.8s</span>
+      <span class="rh-bg rh-ok">SUCCESS</span>
+    </button>
+    <button class="rh-row" type="button" data-run="1">
+      <span class="rh-d"><span data-daysago="1">--</span> 09:00</span>
+      <span class="rh-s">竞品 B 超时 · 重试 1 次后成功</span>
+      <span class="rh-tm">6.2s</span>
+      <span class="rh-bg rh-warn">RETRIED</span>
+    </button>
+    <button class="rh-row" type="button" data-run="2">
+      <span class="rh-d"><span data-daysago="2">--</span> 09:00</span>
+      <span class="rh-s">无变动 · 跳过推送</span>
+      <span class="rh-tm">1.9s</span>
+      <span class="rh-bg rh-skip">SKIPPED</span>
+    </button>
+    <button class="rh-row" type="button" data-run="0">
+      <span class="rh-d"><span data-daysago="3">--</span> 09:00</span>
+      <span class="rh-s">正常 · 3 处变动</span>
+      <span class="rh-tm">3.9s</span>
+      <span class="rh-bg rh-ok">SUCCESS</span>
+    </button>
   </div>
 
   <div class="demo-bar">
