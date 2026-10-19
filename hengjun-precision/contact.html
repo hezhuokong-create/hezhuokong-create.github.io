@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>联系我们 | 衡钧精工</title>
+<meta name="description" content="提交工况参数，三天内获得谐波减速器选型方案。苏州吴中区生产基地，可预约参观。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e110f'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23e8562a' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23e8562a'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/archivo-black-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/plex-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/components.css">
+</head>
+<body>
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html" aria-label="衡钧精工 首页">
+      <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="20" cy="20" r="11" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <circle cx="20" cy="20" r="4" fill="currentColor"/>
+      </svg>
+      <span class="brand__text">
+        <span class="brand__cn">衡钧精工</span>
+        <span class="brand__en">HENGJUN PRECISION</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="主导航">
+      <a class="nav__link" href="index.html">首页</a>
+      <a class="nav__link" href="products.html">产品</a>
+      <a class="nav__link" href="cases.html">案例</a>
+      <a class="nav__link" href="about.html">关于</a>
+      <a class="nav__link" href="contact.html" aria-current="page">联系</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn--primary" href="contact.html">获取选型方案 <span class="btn__arrow" aria-hidden="true">→</span></a>
+      <button class="menu-btn" type="button" data-menu-open aria-label="打开菜单" aria-expanded="false">
+        <svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true"><path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" data-open="false" role="dialog" aria-modal="true" aria-label="站点菜单">
+  <div class="drawer__top">
+    <span class="brand__cn">衡钧精工</span>
+    <button class="menu-btn" type="button" data-menu-close aria-label="关闭菜单">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+  </div>
+  <nav class="drawer__nav" aria-label="移动端导航">
+    <a href="index.html"><span>01</span>首页</a>
+    <a href="products.html"><span>02</span>产品</a>
+    <a href="cases.html"><span>03</span>案例</a>
+    <a href="about.html"><span>04</span>关于</a>
+    <a href="contact.html"><span>05</span>联系</a>
+  </nav>
+  <div class="drawer__foot">苏州 · 吴中区精工路 18 号<br><span class="num">0512-6688 3020</span></div>
+</div>
+
+<main id="main">
+
+<section class="page-head">
+  <span class="page-head__idx" aria-hidden="true">05</span>
+  <div class="container page-head__inner">
+    <nav class="breadcrumb" aria-label="面包屑"><a href="index.html">首页</a><span>/</span><span>联系</span></nav>
+    <h1>把工况发过来，<br>三天内给方案</h1>
+    <p class="page-head__lead">
+      需要的就四项：负载谱、转速、安装空间、期望寿命。有图纸或旧型号照片更好，
+      不确定该填什么就随便写一句，我们打电话问。
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="two-col">
+
+      <form class="reveal" data-demo-form novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="name">联系人 <span class="req">*</span></label>
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="怎么称呼你" required>
+            <span class="field__error" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="company">公司</label>
+            <input id="company" name="company" type="text" autocomplete="organization" placeholder="选填">
+            <span class="field__error" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="phone">电话 / 微信 <span class="req">*</span></label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="方便直接沟通" required>
+            <span class="field__error" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="email">邮箱 <span class="req">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="name@company.com" required>
+            <span class="field__error" aria-live="polite"></span>
+          </div>
+          <div class="field field--full">
+            <label for="need">应用场景</label>
+            <select id="need" name="need">
+              <option value="">请选择（可跳过）</option>
+              <option>协作机器人关节</option>
+              <option>工业机器人 / 数控分度</option>
+              <option>半导体设备</option>
+              <option>医疗机械</option>
+              <option>其他 / 还没定</option>
+            </select>
+            <span class="field__error" aria-live="polite"></span>
+          </div>
+          <div class="field field--full">
+            <label for="detail">工况描述 <span class="req">*</span></label>
+            <textarea id="detail" name="detail" placeholder="例：腕部关节，负载 8 kg，节拍 2 秒一次往复，每天 16 小时，安装空间受限于原结构。原用某日系 14 型，想找对等替换。" required></textarea>
+            <span class="field__error" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <button class="btn btn--primary" type="submit">提交工况 <span class="btn__arrow" aria-hidden="true">→</span></button>
+        </div>
+        <div class="form-status" role="status" aria-live="polite"></div>
+        <p class="table-note">
+          提交即表示同意我们用于选型沟通。不群发、不外传，技术资料可签保密协议后提供。
+        </p>
+      </form>
+
+      <div class="reveal" style="--d:120ms">
+        <dl class="contact-list">
+          <div class="contact-item">
+            <dt>电话</dt>
+            <dd><span class="num">0512-6688 3020</span>（转 2 号技术线）</dd>
+          </div>
+          <div class="contact-item">
+            <dt>邮箱</dt>
+            <dd><a href="mailto:sales@hengjun.example">sales@hengjun.example</a></dd>
+          </div>
+          <div class="contact-item">
+            <dt>地址</dt>
+            <dd>江苏省苏州市吴中区精工路 18 号 3 号厂房</dd>
+          </div>
+          <div class="contact-item">
+            <dt>时间</dt>
+            <dd>周一至周六 08:30–18:00</dd>
+          </div>
+        </dl>
+
+        <div class="map-placeholder mt-4" role="img" aria-label="厂区位置示意图：苏州市吴中区精工路 18 号">
+          <div class="map-pin">
+            <span class="map-pin__dot"></span>
+            <span class="map-pin__label">HENGJUN · SUZHOU</span>
+          </div>
+        </div>
+        <p class="table-note">
+          示意图。真实项目此处替换为高德 / 百度地图嵌入，或静态厂区航拍图。
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <span class="brand__cn">衡钧精工</span>
+        <p class="footer-desc">精密传动部件制造商。苏州 · 吴中区精工路 18 号。谐波减速器、精密行星减速器、定制传动模组。</p>
+      </div>
+      <div class="footer-col">
+        <h4>产品</h4>
+        <ul>
+          <li><a href="products.html">杯形标准系列</a></li>
+          <li><a href="products.html">中空轴系列</a></li>
+          <li><a href="products.html">法兰输出系列</a></li>
+          <li><a href="products.html">规格表下载</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>公司</h4>
+        <ul>
+          <li><a href="about.html">关于我们</a></li>
+          <li><a href="cases.html">交付案例</a></li>
+          <li><a href="about.html">质量体系</a></li>
+          <li><a href="contact.html">联系方式</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>联系</h4>
+        <ul>
+          <li><span class="num">0512-6688 3020</span></li>
+          <li><a href="mailto:sales@hengjun.example">sales@hengjun.example</a></li>
+          <li>周一至周六 08:30–18:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> 衡钧精工（演示模板）· 苏 ICP 备 00000000 号</span>
+      <span>本页为公司官网设计演示，企业与数据均为虚构，仅用于展示交付能力。</span>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts/main.js"></script>
+</body>
+</html>

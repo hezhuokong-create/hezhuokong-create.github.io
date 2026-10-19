@@ -1,0 +1,971 @@
+/* ============================================================
+   2026-10-17 强化层 · 让页面"重"起来的几个块
+   1) 检测面板（HMI 数据可视化）
+   2) 结构分解图（可交互，零件 - 图纸联动）
+   3) 巨型空心字带（节奏断点）
+   4) CTA 色块反转
+   5) 既有区块的加厚重写
+   ============================================================ */
+
+/* ================= 1. 检测面板 ================= */
+.insp {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(70% 90% at 88% 0%, rgba(232, 86, 42, 0.1), transparent 60%),
+    var(--bg);
+}
+
+.insp__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-5);
+}
+.insp__title {
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  max-width: 22em;
+  margin-top: var(--sp-3);
+}
+
+.insp__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  border: 1px solid var(--line-2);
+  background: linear-gradient(180deg, rgba(29, 34, 30, 0.9), rgba(14, 17, 15, 0.9));
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+/* --- 左：背隙分布图 --- */
+.insp__chart {
+  padding: clamp(16px, 2vw, 26px);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+.insp__chart-top,
+.insp__chart-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+  flex-wrap: wrap;
+}
+.insp__chart-foot b { color: var(--text); font-weight: 500; }
+.insp__chart-foot b.hot { color: var(--accent); }
+.insp__chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+/* 直方图柱子 */
+.bar {
+  fill: rgba(236, 232, 223, 0.16);
+  transition: fill var(--dur-base) var(--ease-out);
+}
+.bar:hover { fill: rgba(236, 232, 223, 0.4); }
+.bar--hot { fill: var(--accent); }
+.insp__grid line { stroke: var(--line); stroke-width: 1; }
+.insp__curve {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  transition: stroke-dashoffset 1.6s var(--ease-out);
+}
+.insp__panel.in .insp__curve { stroke-dashoffset: 0; }
+.insp__limit {
+  stroke: rgba(236, 232, 223, 0.34);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+.insp__limit-label {
+  font-family: var(--f-mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  fill: var(--dim);
+}
+
+/* --- 右：逐项读数 --- */
+.insp__rows {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.insp__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 4px var(--sp-3);
+  padding: 16px clamp(14px, 1.8vw, 22px);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.insp__row:last-child { border-bottom: 0; }
+.insp__row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.insp__row:hover::before { transform: scaleY(1); }
+.insp__row-name {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.insp__row-val {
+  font-family: var(--f-display);
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.insp__row-val small {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--dim);
+  margin-left: 3px;
+}
+.insp__row-tag {
+  grid-column: 2;
+  justify-self: end;
+  font-family: var(--f-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  color: #6ee7a8;
+  border: 1px solid rgba(110, 231, 168, 0.34);
+  padding: 2px 6px;
+  margin-top: 6px;
+}
+.insp__row-tag--warn {
+  color: #f0b357;
+  border-color: rgba(240, 179, 87, 0.36);
+}
+
+/* ================= 2. 结构分解图 ================= */
+.brk {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+}
+.brk::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(236, 232, 223, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 232, 223, 0.03) 1px, transparent 1px);
+  background-size: 34px 34px;
+  pointer-events: none;
+}
+
+.brk__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+
+.brk__art {
+  position: relative;
+  padding: clamp(12px, 2vw, 28px);
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(60% 50% at 50% 46%, rgba(232, 86, 42, 0.12), transparent 66%),
+    rgba(14, 17, 15, 0.5);
+  aspect-ratio: 4 / 5;
+  display: grid;
+  place-items: center;
+}
+.brk__art svg { width: 100%; height: 100%; overflow: visible; }
+
+/* 零件的四种状态 */
+.part-shape {
+  fill: none;
+  stroke: rgba(236, 232, 223, 0.3);
+  stroke-width: 1.2;
+  transition: stroke var(--dur-base) var(--ease-out),
+              opacity var(--dur-base) var(--ease-out);
+}
+.part-fill {
+  fill: rgba(236, 232, 223, 0.05);
+  transition: fill var(--dur-base) var(--ease-out);
+}
+.brk__art[data-active] .part { opacity: 0.28; }
+.brk__art[data-active="wave"] .part--wave,
+.brk__art[data-active="flex"] .part--flex,
+.brk__art[data-active="ring"] .part--ring,
+.brk__art[data-active="bearing"] .part--bearing { opacity: 1; }
+.brk__art[data-active="wave"] .part--wave .part-shape,
+.brk__art[data-active="flex"] .part--flex .part-shape,
+.brk__art[data-active="ring"] .part--ring .part-shape,
+.brk__art[data-active="bearing"] .part--bearing .part-shape { stroke: var(--accent); }
+.brk__art[data-active="wave"] .part--wave .part-fill,
+.brk__art[data-active="flex"] .part--flex .part-fill,
+.brk__art[data-active="ring"] .part--ring .part-fill,
+.brk__art[data-active="bearing"] .part--bearing .part-fill { fill: rgba(232, 86, 42, 0.14); }
+
+.part-lead {
+  stroke: rgba(236, 232, 223, 0.18);
+  stroke-width: 0.8;
+  stroke-dasharray: 3 3;
+}
+.part-label {
+  font-family: var(--f-mono);
+  font-size: 7.5px;
+  letter-spacing: 0.14em;
+  fill: var(--dim);
+}
+.brk__dim {
+  position: absolute;
+  right: clamp(12px, 2vw, 24px);
+  bottom: clamp(12px, 2vw, 24px);
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+/* 右侧零件表 */
+.brk__list { display: flex; flex-direction: column; }
+.brk__title {
+  font-size: clamp(28px, 3.6vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin: var(--sp-3) 0 var(--sp-3);
+}
+.brk__lead {
+  color: var(--muted);
+  max-width: 30em;
+  line-height: 1.85;
+  margin-bottom: var(--sp-4);
+}
+
+.parts { border-top: 1px solid var(--line); }
+.parts li {
+  border-bottom: 1px solid var(--line);
+}
+.parts button {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: 16px 0;
+  text-align: left;
+  transition: padding var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+.parts button:hover,
+.parts button[aria-current="true"] { padding-left: 10px; }
+.parts button:hover .parts__no,
+.parts button[aria-current="true"] .parts__no { color: var(--accent); }
+.parts__no {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.parts__name {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  display: block;
+  line-height: 1.35;
+}
+.parts__desc {
+  display: block;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 3px;
+  max-width: 34em;
+}
+.parts__spec {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* ================= 3. 巨型空心字带 ================= */
+.mega {
+  position: relative;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: clamp(16px, 2.4vw, 34px) 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+.mega__track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: mega-run 48s linear infinite;
+}
+/* 用 margin 而非 gap：两半内容宽度必须严格相等，-50% 才能无缝 */
+.mega__track > * {
+  flex: none;
+  margin-right: clamp(24px, 4vw, 64px);
+}
+.mega:hover .mega__track { animation-play-state: paused; }
+.mega__word {
+  font-family: var(--f-display);
+  font-size: clamp(58px, 11vw, 148px);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(236, 232, 223, 0.2);
+  white-space: nowrap;
+}
+.mega__word--cn {
+  font-family: var(--f-sans);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  -webkit-text-stroke: 1px rgba(236, 232, 223, 0.16);
+}
+.mega__word--solid {
+  color: var(--accent);
+  -webkit-text-stroke: 0;
+}
+.mega__dot {
+  width: clamp(8px, 1.2vw, 16px);
+  height: clamp(8px, 1.2vw, 16px);
+  background: var(--accent);
+  border-radius: 50%;
+  flex: none;
+}
+@keyframes mega-run {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ================= 4. CTA 色块反转 ================= */
+.cta {
+  position: relative;
+  background: var(--accent);
+  color: var(--on-accent);
+  overflow: hidden;
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(23, 7, 3, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 7, 3, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+.cta__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  flex-wrap: wrap;
+  padding-block: clamp(40px, 6vw, 76px);
+}
+.cta__title {
+  font-size: clamp(30px, 4.6vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  max-width: 18em;
+  color: var(--on-accent);
+}
+.cta__note {
+  margin-top: var(--sp-3);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(23, 7, 3, 0.72);
+}
+.cta .btn--dark {
+  background: var(--on-accent);
+  color: var(--accent);
+  border-color: var(--on-accent);
+}
+.cta .btn--dark:hover {
+  background: transparent;
+  color: var(--on-accent);
+}
+
+/* ================= 5. 既有区块加厚 ================= */
+
+/* 能力清单：编号放大成巨型数字，行高加大 */
+.cap-row {
+  align-items: start;
+  padding-block: clamp(20px, 2.6vw, 34px);
+}
+.cap-row__idx {
+  font-family: var(--f-display);
+  font-size: clamp(28px, 3.4vw, 46px) !important;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--line-2) !important;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.cap-row:hover .cap-row__idx { color: var(--accent) !important; }
+.cap-row__title { font-size: clamp(19px, 2.1vw, 27px); letter-spacing: -0.02em; }
+
+/* 产品卡：加高、加边框对比、hover 时图形放大 */
+.prod-card { padding: clamp(20px, 2.4vw, 32px); }
+.prod-card__diagram {
+  height: clamp(120px, 13vw, 168px) !important;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.prod-card:hover .prod-card__diagram { transform: scale(1.06); }
+.prod-card__name { font-size: clamp(19px, 2vw, 25px); }
+
+/* 数据带：数字压大，但要留出单位的位置（86px 时 18600 会撑破格子，实测） */
+.metrics__num {
+  font-size: clamp(34px, 4.2vw, 60px) !important;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+.metrics__label {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 9.5px;
+}
+
+/* 案例卡：视觉区加高。min-width:0 防止 grid 被内容撑破（窄屏会溢出几个 px） */
+.case-card { min-width: 0; }
+.case-card__visual { height: clamp(200px, 22vw, 300px) !important; }
+.case-card__title { font-size: clamp(19px, 2vw, 24px); }
+.case-card__body { min-width: 0; }
+
+/* ================= 响应式 ================= */
+@media (max-width: 1000px) {
+  .insp__panel { grid-template-columns: 1fr; }
+  .insp__chart { border-right: 0; border-bottom: 1px solid var(--line); }
+  .brk__grid { grid-template-columns: 1fr; gap: var(--sp-5); }
+  .brk__art { aspect-ratio: 16 / 11; order: 2; }
+  .brk__list { order: 1; }
+}
+
+@media (max-width: 640px) {
+  .insp__head { flex-direction: column; align-items: flex-start; }
+  .parts button { grid-template-columns: 32px minmax(0, 1fr); }
+  .parts__spec { grid-column: 2; justify-self: start; }
+  .mega__word { font-size: clamp(46px, 14vw, 74px); }
+  .cta__inner { flex-direction: column; align-items: flex-start; }
+  .cta__title { font-size: clamp(26px, 8vw, 40px); }
+  .metrics__num { font-size: clamp(38px, 12vw, 60px) !important; }
+}
+
+/* ===================================================================
+   v3 — 章节标题提级 + 高亮词
+   =================================================================== */
+#lines .section-head__title,
+#cases .section-head__title {
+  font-size: clamp(32px, 4.6vw, 66px);
+  line-height: 1.08;
+  letter-spacing: -0.028em;
+}
+.hl { color: var(--accent); }
+.hl--mono {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+/* 标题里的单位不该和数字抢重量 */
+.unit {
+  font-size: 0.44em;
+  font-family: var(--f-mono);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--dim);
+  vertical-align: 0.16em;
+  margin-left: 0.06em;
+}
+.nowrap { white-space: nowrap; }
+
+/* ===================================================================
+   v3 — 产品线：三根规格条（整列反转 + 扭矩标尺 + 幽灵代号）
+   =================================================================== */
+.prod-grid {
+  border-top: 2px solid var(--line-2);
+  border-bottom: 1px solid var(--line);
+}
+.prod-card {
+  position: relative;
+  gap: 0;
+  padding: clamp(18px, 1.9vw, 26px) clamp(18px, 1.9vw, 26px) clamp(22px, 2.2vw, 30px);
+  overflow: hidden;
+  isolation: isolate;
+  min-width: 0;
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+/* 悬停时整列翻成信号橙：全站最强的一处单卡信号 */
+.prod-card:hover { background: var(--accent); color: var(--on-accent); }
+.prod-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: repeating-linear-gradient(118deg, rgba(23, 7, 3, 0.09) 0 1px, transparent 1px 10px);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+.prod-card:hover::before { opacity: 1; }
+
+/* 顶部编码条 */
+.prod-card__rail {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--dim);
+  transition: border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+.prod-card__no { letter-spacing: 0.2em; }
+.prod-card__code {
+  font-family: var(--f-mono);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.prod-card:hover .prod-card__rail {
+  border-bottom-color: rgba(23, 7, 3, 0.26);
+  color: rgba(23, 7, 3, 0.62);
+}
+.prod-card:hover .prod-card__code { color: var(--on-accent); }
+
+/* 图形舞台 */
+.prod-card__stage {
+  position: relative;
+  height: clamp(172px, 16.5vw, 226px);
+  margin: 16px 0 18px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px),
+    radial-gradient(closest-side, rgba(232, 86, 42, 0.08), transparent);
+  background-size: 100% 1px, 1px 100%, 76% 76%;
+  background-position: 0 50%, 50% 0, 50% 46%;
+  background-repeat: no-repeat;
+}
+.prod-card__stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--line);
+  transition: border-color var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+.prod-card:hover .prod-card__stage::after { border-color: rgba(23, 7, 3, 0.22); }
+
+/* 巨型描边代号：卡片里最重的一笔字 */
+.prod-card__ghost {
+  position: absolute;
+  right: -6px;
+  bottom: -20px;
+  font-family: var(--f-display);
+  font-size: clamp(84px, 8.4vw, 118px);
+  line-height: 0.78;
+  letter-spacing: -0.05em;
+  color: transparent;
+  /* 默认就带颜色：触屏没有 hover，靠悬停才出彩等于手机上没设计 */
+  -webkit-text-stroke: 1px rgba(232, 86, 42, 0.42);
+  pointer-events: none;
+  user-select: none;
+  transition: -webkit-text-stroke-color var(--dur-base) var(--ease-out);
+}
+.prod-card:hover .prod-card__ghost { -webkit-text-stroke-color: rgba(23, 7, 3, 0.3); }
+
+.prod-card__diagram {
+  position: relative;
+  z-index: 1;
+  /* 图形几乎撑满视窗才叫「设备」，缩在中间只是图标 */
+  width: min(96%, 306px);
+  height: auto;
+  color: rgba(232, 86, 42, 0.46);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.prod-card:hover .prod-card__diagram { color: var(--on-accent); }
+
+/* 图形缓慢转动：默认就在转，悬停加速 —— 静态图撑不起「设备在运行」 */
+.spin { transform-origin: 100px 60px; animation: prod-spin 72s linear infinite; }
+.spin-rev { transform-origin: 100px 60px; animation: prod-spin-rev 48s linear infinite; }
+.prod-card:hover .spin { animation-duration: 9s; }
+.prod-card:hover .spin-rev { animation-duration: 6s; }
+@keyframes prod-spin { to { transform: rotate(360deg); } }
+@keyframes prod-spin-rev { to { transform: rotate(-360deg); } }
+
+.prod-card__name {
+  margin: 0;
+  font-size: clamp(21px, 2.1vw, 28px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.prod-card__desc {
+  margin-top: 10px;
+  padding-right: 6px;
+  /* 固定两行高度：描述行数不同会让下面规格表错位 */
+  min-height: 3.7em;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.82;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.prod-card:hover .prod-card__desc { color: rgba(23, 7, 3, 0.72); }
+
+.spec-mini { margin-top: 20px; border-top: 1px solid var(--line-2); }
+.spec-mini div { padding: 10px 0; }
+.spec-mini dt {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.spec-mini dd {
+  font-size: var(--fs-md);
+  font-weight: 500;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.spec-mini dd em {
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-left: 3px;
+}
+.prod-card:hover .spec-mini { border-top-color: rgba(23, 7, 3, 0.3); }
+.prod-card:hover .spec-mini div { border-bottom-color: rgba(23, 7, 3, 0.18); }
+.prod-card:hover .spec-mini dt,
+.prod-card:hover .spec-mini dd em { color: rgba(23, 7, 3, 0.6); }
+.prod-card:hover .spec-mini dd { color: var(--on-accent); }
+
+/* 扭矩覆盖标尺：对数刻度，0.5 → 800 N·m */
+.prod-card__scale { margin-top: 20px; }
+.prod-card__scale-bar {
+  position: relative;
+  display: block;
+  height: 6px;
+  background: rgba(236, 232, 223, 0.08);
+  border-top: 1px solid var(--line-2);
+  transition: background var(--dur-base) var(--ease-out);
+}
+.prod-card__scale-bar i {
+  position: absolute;
+  top: -1px;
+  bottom: 0;
+  left: var(--a);
+  right: calc(100% - var(--b));
+  background: var(--accent);
+  transition: background var(--dur-base) var(--ease-out);
+}
+/* 刻度小竖线：让它读起来是「标尺」而不是一条分割线 */
+.prod-card__scale-bar::before,
+.prod-card__scale-bar::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  bottom: 0;
+  width: 1px;
+  background: var(--line-2);
+  z-index: 1;
+}
+.prod-card__scale-bar::before { left: 0; }
+.prod-card__scale-bar::after { right: 0; }
+.prod-card:hover .prod-card__scale-bar::before,
+.prod-card:hover .prod-card__scale-bar::after { background: rgba(23, 7, 3, 0.3); }
+.prod-card__scale-tick {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 7px;
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.prod-card__scale-tick span { letter-spacing: 0.16em; font-size: 9px; }
+.prod-card__scale-tick b { font-weight: 500; color: var(--muted); transition: color var(--dur-base) var(--ease-out); }
+.prod-card:hover .prod-card__scale-bar { background: rgba(23, 7, 3, 0.24); }
+.prod-card:hover .prod-card__scale-bar i { background: var(--on-accent); }
+.prod-card:hover .prod-card__scale-tick,
+.prod-card:hover .prod-card__scale-tick b { color: rgba(23, 7, 3, 0.7); }
+
+/* ===================================================================
+   v3 — 交付案例：大图 + 数据压图 + 错位
+   =================================================================== */
+.case-grid {
+  gap: clamp(16px, 2vw, 30px);
+  align-items: start;
+}
+/* 两张卡错位，破掉「并排两格」的模板感 */
+.case-card:nth-child(2) { margin-top: clamp(24px, 4.5vw, 72px); }
+.case-card { position: relative; }
+
+.case-card__visual {
+  aspect-ratio: auto;
+  /* 高度变量化：扫描线要按同一个值跑满整块，两处不能各写各的 */
+  --case-h: clamp(320px, 34vw, 470px);
+  height: var(--case-h) !important;
+  /* 面积大了三倍，斜纹密度要降下来，否则廉价 */
+  background:
+    repeating-linear-gradient(135deg, rgba(236, 232, 223, 0.026) 0 1px, transparent 1px 17px),
+    linear-gradient(160deg, #1c231e 0%, #0f120f 62%);
+}
+.case-card__visual::after {
+  inset: auto -30% -70% -30%;
+  height: 90%;
+}
+
+/* 顶部 HUD 信息条 */
+.case-card__hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(236, 232, 223, 0.1);
+  background: linear-gradient(180deg, rgba(14, 17, 15, 0.94) 0%, rgba(14, 17, 15, 0.62) 62%, rgba(14, 17, 15, 0) 100%);
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.case-card__hud b { color: var(--accent); font-weight: 500; }
+/* 旧的定位标签并入 HUD，去掉原来的浮动框 */
+.case-card__tag {
+  position: static;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--text);
+  z-index: auto;
+}
+
+/* 编号改成右上角大号描边字 */
+.case-card__idx {
+  top: 52px;
+  right: 18px;
+  bottom: auto;
+  left: auto;
+  z-index: 3;
+  font-size: clamp(64px, 7.6vw, 108px);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(236, 232, 223, 0.2);
+}
+.case-card:hover .case-card__idx { -webkit-text-stroke-color: rgba(232, 86, 42, 0.45); }
+
+.case-card__art {
+  right: 0;
+  bottom: 6%;
+  width: 78%;
+  max-width: none;
+  color: rgba(236, 232, 223, 0.5);
+  z-index: 1;
+}
+/* 视窗准星：横竖各一条基准线横跨整块，仪表感一下就出来了 */
+.case-card__visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(236, 232, 223, 0.07) 50%, transparent calc(50% + 0.5px)),
+    linear-gradient(180deg, transparent calc(56% - 0.5px), rgba(236, 232, 223, 0.07) 56%, transparent calc(56% + 0.5px));
+}
+
+/* 和图幅一样：宁可溢出边框，也不要缩在中间当图标 */
+.case-card:nth-child(1) .case-card__art { right: -7%; bottom: 12%; width: 106%; }
+.case-card:nth-child(2) .case-card__art { right: -7%; bottom: 3%; width: 87%; }
+.case-card:hover .case-card__art {
+  color: rgba(232, 86, 42, 0.9);
+  transform: translateY(-8px) scale(1.03);
+}
+
+/* 扫描光带：一条细线扫过，而不是一片雾 */
+.case-card__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(232, 86, 42, 0.5) 12%,
+    rgba(255, 140, 96, 0.95) 50%,
+    rgba(232, 86, 42, 0.5) 88%,
+    transparent 100%
+  );
+  box-shadow: 0 0 22px 3px rgba(232, 86, 42, 0.22);
+  animation: case-scan 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  opacity: 0;
+}
+.case-card:nth-child(2) .case-card__scan { animation-delay: -4.5s; }
+@keyframes case-scan {
+  0% { transform: translateY(0); opacity: 0; }
+  6% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { transform: translateY(var(--case-h)); opacity: 0; }
+}
+
+/* 主数据压图左下 */
+.case-card__hero {
+  position: absolute;
+  left: clamp(16px, 2vw, 28px);
+  bottom: clamp(16px, 2vw, 26px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.case-card__hero-num {
+  display: flex;
+  align-items: flex-start;
+  font-family: var(--f-display);
+  font-size: clamp(54px, 6.6vw, 104px);
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  color: var(--text);
+  text-shadow: 0 6px 40px rgba(14, 17, 15, 0.9);
+}
+.case-card__hero-num em {
+  font-style: normal;
+  font-size: 0.34em;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--accent);
+  margin-left: 5px;
+  margin-top: 2px;
+}
+.case-card__hero-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  padding-left: 2px;
+}
+
+.case-card__title { font-size: clamp(21px, 2.2vw, 27px); letter-spacing: -0.02em; }
+.case-card__body { gap: 14px; }
+/* 案例正文是买家真正会读的部分，13px + 次级灰在深底上偏吃力 */
+.case-card__desc {
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: rgba(236, 232, 223, 0.72);
+  /* 两张卡描述行数不同会让整卡高度差一行，底部数据对不齐 */
+  min-height: 5.7em;
+}
+
+/* 次要数据：两列带竖线的数据对 */
+.case-card__result {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding-top: 0;
+  margin-top: auto;
+  border-top: 1px solid var(--line-2);
+}
+.case-card__result > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 0 2px;
+  min-width: 0;
+}
+.case-card__result > div + div {
+  border-left: 1px solid var(--line);
+  padding-left: 16px;
+}
+.case-card__result b {
+  font-family: var(--f-display);
+  font-size: clamp(19px, 1.9vw, 24px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.case-card__result span {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--dim);
+}
+
+/* ===================================================================
+   v3 — 响应式
+   =================================================================== */
+@media (max-width: 900px) {
+  .case-card:nth-child(2) { margin-top: 0; }
+  .case-card__visual { --case-h: clamp(280px, 47vw, 380px); }
+  .prod-card__stage { height: clamp(160px, 34vw, 220px); }
+  .prod-card__ghost { font-size: clamp(80px, 20vw, 112px); }
+  .case-card__hero-num { font-size: clamp(52px, 11vw, 80px); }
+}
+
+@media (max-width: 640px) {
+  #lines .section-head__title,
+  #cases .section-head__title { font-size: clamp(28px, 8.4vw, 40px); }
+  .case-card__hud { font-size: 8.5px; letter-spacing: 0.1em; padding: 11px 13px; }
+  .case-card__visual { --case-h: clamp(250px, 70vw, 320px); }
+  .case-card__result b { font-size: 20px; }
+  .prod-card__scale-tick span { display: none; }
+  .prod-card__desc { min-height: 0; }
+  .case-card__desc { min-height: 0; }
+  .prod-card__diagram { width: min(88%, 260px); }
+  .prod-card__ghost { right: 4px; bottom: -24px; font-size: clamp(94px, 26vw, 132px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-card__scan { animation: none; opacity: 0; }
+  /* 齿轮现在是默认就在转，降级规则必须覆盖默认状态，不能只管 hover */
+  .spin,
+  .spin-rev { animation: none !important; }
+}

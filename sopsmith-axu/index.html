@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOPsmith — Your SOP gets 30 seconds. Make them count.</title>
+<meta name="description" content="Structured guidance and a 30-second admissions-officer skim for your statement of purpose. Join the waitlist — launching Nov 2026.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='7' fill='%23BE3B2B'/%3E%3Ctext x='32' y='47' font-family='Georgia,serif' font-size='44' font-weight='700' fill='%23FAF6EE' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<!-- 字体自托管：latin 子集 + 静态实例化，9 个文件共 114KB
+     原来是 fonts.googleapis.com —— 国内取不到会回退 Georgia，大标题的衬线对比度明显掉档 -->
+<link rel="preload" href="assets/fonts/playfair-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/playfair-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/playfair-500-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/sourceserif-400.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* ============ 自托管字体（6 个静态文件，按需加载） ============ */
+@font-face{font-family:"Playfair Display";font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/playfair-600.woff2) format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/playfair-700.woff2) format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:italic;font-weight:500;font-display:swap;src:url(assets/fonts/playfair-500-italic.woff2) format("woff2")}
+@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/sourceserif-400.woff2) format("woff2")}
+@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/sourceserif-600.woff2) format("woff2")}
+@font-face{font-family:"Source Serif 4";font-style:italic;font-weight:400;font-display:swap;src:url(assets/fonts/sourceserif-400-italic.woff2) format("woff2")}
+/* ============================================================
+   设计定调 v2：杂志编辑风（Editorial）· 活力版
+   - v1 的问题：全页一个底色、区块节奏一刀切、除入场外无动态——像一页纸
+   - v2 手法：① hero 红笔稿=现场演示（30s 倒计时+批注逐条画出+可重放）
+     ② 明暗交替（深色数字带/深色结尾 CTA vs 暖纸底）③ 稿纸纹理+红色 margin 线
+     ④ 全宽大引言破节奏 ⑤ 可切换 Tab 对比 ⑥ 圆形印章 ⑦ 微交互+视差+ticker
+   - 受众：申请季硕博申请者（非母语英语者为主）；兼作闲鱼作品集
+   - 字体：Playfair Display（展示）+ Source Serif 4（正文）
+   - 配色：暖纸 60% / 墨 30% / 红笔朱砂 10%（唯一强调色）
+   ============================================================ */
+:root{
+  --color-bg:#FAF6EE;
+  --color-paper-2:#F2ECDF;
+  --color-surface:#FFFFFF;
+  --color-ink:#1C1815;
+  --color-muted:#6B6152;
+  --color-accent:#BE3B2B;
+  --color-accent-soft:rgba(190,59,43,.09);
+  --color-border:rgba(28,24,21,.16);
+  --color-rule:rgba(28,24,21,.28);
+  --color-ink-muted:rgba(250,246,238,.62);
+  --color-ink-border:rgba(250,246,238,.18);
+  --font-display:"Playfair Display",Georgia,"Times New Roman",serif;
+  --font-body:"Source Serif 4",Georgia,serif;
+  --text-xs:13px; --text-s:15px; --text-m:17px; --text-l:21px;
+  --text-xl:26px; --text-2xl:33px;
+  --display-1:clamp(42px,7vw,76px);
+  --display-2:clamp(30px,4.4vw,46px);
+  --pull-quote:clamp(28px,4.6vw,56px);
+  --big-num:clamp(64px,9vw,112px);
+  --space-1:4px; --space-2:8px; --space-3:16px; --space-4:24px;
+  --space-5:40px; --space-6:64px; --space-7:96px;
+  --radius-sm:2px; --radius-md:4px; --radius-lg:8px;
+  --shadow-1:0 2px 8px rgba(28,24,21,.08);
+  --shadow-2:0 8px 28px rgba(28,24,21,.10);
+  --shadow-3:0 24px 64px rgba(28,24,21,.16);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --dur-fast:160ms; --dur-base:320ms; --dur-slow:640ms;
+  --container:1120px;
+}
+/* ============ 基础 ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--color-bg);color:var(--color-ink);
+  font-family:var(--font-body);font-size:var(--text-m);line-height:1.65;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:40;opacity:.05;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.container{max-width:var(--container);margin:0 auto;padding:0 var(--space-5)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+::selection{background:var(--color-accent);color:#FFF}
+a{color:var(--color-ink);text-decoration:none}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;border-radius:var(--radius-sm)}
+.band-dark :focus-visible{outline-color:#FAF6EE}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;line-height:1.08;letter-spacing:-.02em}
+h1{font-size:var(--display-1);line-height:1.02;letter-spacing:-.03em}
+h2{font-size:var(--display-2)}
+h3{font-size:var(--text-l);font-weight:600;line-height:1.25;letter-spacing:-.01em}
+p{max-width:62ch}
+.eyebrow{
+  font-family:var(--font-body);font-size:var(--text-xs);font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent);
+}
+.lede{font-size:var(--text-l);line-height:1.55}
+.micro{font-size:var(--text-xs);color:var(--color-muted);line-height:1.6}
+/* ============ 报头 + Ticker ============ */
+.masthead{border-bottom:1px solid var(--color-rule);background:var(--color-bg)}
+.masthead-top{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:var(--space-2) 0;border-bottom:1px solid var(--color-border);
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-muted);
+}
+.masthead-inner{display:flex;justify-content:space-between;align-items:center;padding:var(--space-4) 0}
+.wordmark{font-family:var(--font-display);font-size:26px;font-weight:700;letter-spacing:-.02em}
+.wordmark .dot{color:var(--color-accent)}
+.masthead nav{display:flex;gap:var(--space-5);align-items:center;font-size:var(--text-s)}
+.nav-link{border-bottom:1px solid transparent;transition:border-color var(--dur-fast) ease-out}
+.nav-link:hover{border-bottom-color:var(--color-ink)}
+.nav-cta{
+  border:1px solid var(--color-ink);border-radius:var(--radius-sm);
+  padding:var(--space-2) var(--space-4);min-height:44px;display:inline-flex;align-items:center;
+  transition:background var(--dur-fast) ease-out,color var(--dur-fast) ease-out;
+}
+.nav-cta:hover{background:var(--color-ink);color:var(--color-bg)}
+/* Ticker：编辑式滚动条带 */
+.ticker{
+  overflow:hidden;border-bottom:1px solid var(--color-rule);
+  background:var(--color-paper-2);padding:var(--space-2) 0;
+  font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-muted);
+}
+.ticker-track{display:flex;width:max-content;animation:ticker 36s linear infinite}
+.ticker-track span{padding:0 var(--space-4);white-space:nowrap}
+.ticker-track b{color:var(--color-accent);font-weight:600}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* ============ Hero ============ */
+.hero{
+  display:grid;grid-template-columns:7fr 5fr;gap:var(--space-6);
+  align-items:start;padding:var(--space-7) 0 var(--space-6);
+  position:relative;
+}
+.hero::before{
+  content:"";position:absolute;inset:-10% -20% auto -30%;height:70%;
+  background:radial-gradient(50rem 26rem at 18% 0%,rgba(190,59,43,.055),transparent 65%);
+  pointer-events:none;z-index:0;
+}
+.hero>*{position:relative;z-index:1}
+.hero h1{margin:var(--space-4) 0 var(--space-4)}
+.hero h1 em{font-style:italic;font-weight:500}
+.hero .lede{max-width:34ch}
+.hero-form{display:flex;gap:var(--space-2);margin-top:var(--space-5);max-width:460px}
+.hero-form input{
+  flex:1;min-width:0;min-height:48px;padding:var(--space-2) var(--space-3);
+  background:transparent;border:1px solid var(--color-ink);border-radius:var(--radius-sm);
+  font-family:var(--font-body);font-size:var(--text-s);color:var(--color-ink);
+  transition:box-shadow var(--dur-fast) ease-out;
+}
+.hero-form input::placeholder{color:var(--color-muted)}
+.hero-form input:focus-visible{outline:none;box-shadow:0 0 0 2px var(--color-bg),0 0 0 4px var(--color-accent)}
+.btn{
+  position:relative;overflow:hidden;min-height:48px;padding:var(--space-2) var(--space-5);
+  border:1px solid var(--color-ink);background:var(--color-ink);color:var(--color-bg);
+  border-radius:var(--radius-sm);font-family:var(--font-body);font-size:var(--text-s);
+  font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:transform var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) ease-out;
+}
+/* 微交互：悬停时一道纸色扫光 */
+.btn::after{
+  content:"";position:absolute;inset:0;background:var(--color-bg);
+  transform:translateX(-101%);transition:transform var(--dur-base) var(--ease-out);
+}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+.btn:hover::after{transform:translateX(0)}
+.btn span{position:relative;z-index:1;transition:color var(--dur-fast) ease-out}
+.btn:hover span{color:var(--color-ink)}
+.btn:active{transform:translateY(0)}
+.form-msg{font-size:var(--text-xs);margin-top:var(--space-2);min-height:1.2em;color:var(--color-accent)}
+.form-msg:empty{min-height:0}
+.form-success{
+  font-family:var(--font-display);font-style:italic;font-size:var(--text-l);
+  border-left:3px solid var(--color-accent);padding-left:var(--space-3);margin-top:var(--space-4);
+}
+.hero .micro{margin-top:var(--space-4);max-width:46ch}
+/* —— 红笔稿：现场演示卡（全站记忆点） —— */
+.hero-visual{margin-top:var(--space-5);perspective:900px}
+.skim-card{
+  background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-3);
+  padding:var(--space-5);transform:rotate(-1.3deg);
+  transition:transform var(--dur-base) var(--ease-out),box-shadow var(--dur-base) ease-out;
+  transform-style:preserve-3d;
+}
+.skim-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding-bottom:var(--space-3);border-bottom:1px solid var(--color-border);margin-bottom:var(--space-4);
+}
+.skim-title{font-family:var(--font-display);font-size:var(--text-l);font-weight:600}
+.skim-clock{
+  font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;
+  font-variant-numeric:tabular-nums;color:var(--color-accent);
+}
+.skim-progress{height:2px;background:var(--color-border);margin-bottom:var(--space-4);border-radius:1px;overflow:hidden}
+.skim-progress i{display:block;height:100%;width:0;background:var(--color-accent)}
+.skimming .skim-progress i{width:100%;transition:width 4.5s linear}
+.skim-para{font-size:var(--text-s);line-height:1.85;color:var(--color-ink)}
+/* 红笔三标记：划线/糊弄/保留，动画由 .skimming 驱动 */
+.sk{position:relative;display:inline}
+.sk-cut::after{
+  content:"";position:absolute;left:-2px;right:-2px;top:54%;height:2px;
+  background:var(--color-accent);transform:scaleX(0);transform-origin:left center;
+  transition:transform .45s var(--ease-out) .9s;
+}
+.skimming .sk-cut{color:var(--color-muted)}
+.skimming .sk-cut::after{transform:scaleX(1)}
+.sk-vague{
+  background:linear-gradient(var(--color-accent-soft),var(--color-accent-soft)) no-repeat;
+  background-size:0% 100%;transition:background-size .5s var(--ease-out) 2s;
+}
+.skimming .sk-vague{background-size:100% 100%}
+.sk-keep::after{
+  content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+  background:var(--color-ink);transform:scaleX(0);transform-origin:left center;
+  transition:transform .45s var(--ease-out) 3.1s;
+}
+.skimming .sk-keep::after{transform:scaleX(1)}
+.sk-notes{list-style:none;margin-top:var(--space-4);display:grid;gap:var(--space-2)}
+.sk-notes li{
+  font-size:var(--text-xs);line-height:1.5;padding-left:var(--space-4);
+  position:relative;color:var(--color-muted);
+  opacity:0;transform:translateX(-8px);
+  transition:opacity .35s var(--ease-out),transform .35s var(--ease-out);
+}
+.sk-notes li::before{content:"";position:absolute;left:0;top:.45em;width:10px;height:2px;background:var(--color-accent)}
+.sk-notes li:nth-child(1){transition-delay:1.5s}
+.sk-notes li:nth-child(2){transition-delay:2.6s}
+.sk-notes li:nth-child(3){transition-delay:3.7s}
+.skimming .sk-notes li{opacity:1;transform:none}
+.sk-notes .note-keep{color:var(--color-ink)}
+.sk-notes .note-keep::before{background:var(--color-ink);width:12px}
+/* 重放重置：无过渡强制归零——直接 remove/add 类会被 transition-delay 拖住导致重放无效 */
+.sk-reset .sk-cut::after{transition:none;transform:scaleX(0)}
+.sk-reset .sk-vague{transition:none;background-size:0% 100%}
+.sk-reset .sk-keep::after{transition:none;transform:scaleX(0)}
+.sk-reset .sk-notes li{transition:none;opacity:0;transform:translateX(-8px)}
+.sk-reset .skim-progress i{transition:none;width:0}
+.sk-foot{
+  display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-4);
+  padding-top:var(--space-3);border-top:1px solid var(--color-border);
+}
+.sk-speed{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted)}
+.sk-replay{
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink);
+  background:none;border:none;cursor:pointer;padding:var(--space-1) 0;
+  border-bottom:1px solid var(--color-accent);opacity:0;pointer-events:none;
+  transition:opacity var(--dur-base) var(--ease-out),color var(--dur-fast) ease-out;
+  min-height:32px;
+}
+.sk-done .sk-replay{opacity:1;pointer-events:auto}
+.sk-replay:hover{color:var(--color-accent)}
+/* ============ 数字带（深色） ============ */
+.band-dark{background:var(--color-ink);color:var(--color-bg)}
+.band-dark .micro{color:var(--color-ink-muted)}
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-5);
+  padding:var(--space-6) 0;
+}
+.stat{border-left:1px solid var(--color-ink-border);padding-left:var(--space-4)}
+.stat:first-child{border-left:none;padding-left:0}
+.stat-num{
+  font-family:var(--font-body);font-size:var(--big-num);font-weight:600;
+  line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums;
+}
+.stat:first-child .stat-num{color:var(--color-accent)}
+.stat-label{margin-top:var(--space-2);font-size:var(--text-s);color:var(--color-ink-muted);max-width:24ch}
+/* ============ 期号式分隔条 ============ */
+.rule-meta{
+  border-top:1px solid var(--color-rule);padding:var(--space-2) 0;
+}
+.rule-meta .container{
+  display:flex;justify-content:space-between;gap:var(--space-4);
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-muted);
+}
+/* ============ 区块 ============ */
+.section{padding:var(--space-6) 0 var(--space-7)}
+.section h2{margin-bottom:var(--space-5);max-width:22ch}
+.section-intro{max-width:58ch}
+.dropcap::first-letter{
+  font-family:var(--font-display);font-size:3.4em;font-weight:700;
+  float:left;line-height:.82;padding:.06em .12em 0 0;
+}
+/* 稿纸区：横线纸纹 + 红色 margin 线（手稿隐喻） */
+.ruled{
+  background-color:var(--color-paper-2);
+  background-image:repeating-linear-gradient(to bottom,transparent 0 31px,rgba(28,24,21,.055) 31px 32px);
+  position:relative;
+}
+.ruled::before{
+  content:"";position:absolute;top:0;bottom:0;left:max(calc((100vw - var(--container)) / 2 + var(--space-5) - 26px),var(--space-3));
+  width:1px;background:rgba(190,59,43,.35);
+}
+/* 问题区：编号目录式列表 */
+.problems{list-style:none;margin-top:var(--space-5);border-top:1px solid var(--color-border)}
+.problems li{
+  display:grid;grid-template-columns:80px 1fr 2fr;gap:var(--space-4);
+  align-items:baseline;padding:var(--space-4) 0;border-bottom:1px solid var(--color-border);
+}
+.problems .num{
+  font-family:var(--font-body);font-weight:600;font-size:var(--text-xl);
+  color:var(--color-accent);font-variant-numeric:tabular-nums;
+}
+.problems p{color:var(--color-muted);font-size:var(--text-s);max-width:52ch}
+/* 全宽大引言：破节奏的 editorial 时刻 */
+.pullquote{padding:var(--space-7) 0;text-align:left}
+.pullquote blockquote{
+  font-family:var(--font-display);font-size:var(--pull-quote);font-style:italic;
+  font-weight:500;line-height:1.12;letter-spacing:-.02em;max-width:20ch;
+}
+.pullquote blockquote em{color:var(--color-accent);font-style:italic}
+.pullquote figcaption{
+  margin-top:var(--space-4);font-size:var(--text-xs);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--color-muted);
+}
+/* 三步：纵向时间线，滚动时竖线生长 */
+.steps{list-style:none;margin-top:var(--space-5);position:relative;display:grid;gap:var(--space-5)}
+.steps::before{
+  content:"";position:absolute;left:35.5px;top:8px;bottom:8px;width:1px;
+  background:var(--color-rule);transform:scaleY(0);transform-origin:top;
+  transition:transform .8s var(--ease-out) .1s;
+}
+.steps.in::before{transform:scaleY(1)}
+.steps li{
+  display:grid;grid-template-columns:72px 1fr;gap:var(--space-4);
+  align-items:start;position:relative;
+}
+.step-num{
+  font-family:var(--font-body);font-size:44px;font-weight:600;line-height:1;
+  color:var(--color-border);font-variant-numeric:tabular-nums;
+  background:var(--color-bg);padding:var(--space-1) 0;position:relative;z-index:1;
+  text-align:center;
+}
+.steps p{margin-top:var(--space-2);color:var(--color-muted);font-size:var(--text-s);max-width:56ch}
+.step-feature .step-num{color:var(--color-accent)}
+.step-feature h3{color:var(--color-ink)}
+.step-feature p{color:var(--color-ink)}
+.step-tag{
+  display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--color-accent);border:1px solid var(--color-accent);border-radius:999px;
+  padding:2px 10px;margin-top:var(--space-2);
+}
+/* 对比区：可切换 Tab */
+.compare{margin-top:var(--space-5)}
+.compare-tabs{display:flex;gap:var(--space-2);margin-bottom:var(--space-4);flex-wrap:wrap}
+.compare-tab{
+  font-family:var(--font-body);font-size:var(--text-s);font-weight:600;
+  padding:var(--space-2) var(--space-4);min-height:44px;
+  background:transparent;border:1px solid var(--color-ink);border-radius:999px;
+  cursor:pointer;color:var(--color-ink);
+  transition:background var(--dur-fast) ease-out,color var(--dur-fast) ease-out;
+}
+.compare-tab[aria-selected="true"]{background:var(--color-ink);color:var(--color-bg)}
+.compare-panel{display:none}
+.compare-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-5);animation:panel-in var(--dur-base) var(--ease-out)}
+@keyframes panel-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.compare-col{padding:var(--space-5);border-radius:var(--radius-lg)}
+.compare-col ul{list-style:none;margin-top:var(--space-4);display:grid;gap:var(--space-2)}
+.compare-col li{font-size:var(--text-s);padding-left:var(--space-4);position:relative}
+.compare-col li::before{content:"—";position:absolute;left:0;color:var(--color-muted)}
+.compare-muted{background:rgba(28,24,21,.045);border:1px solid var(--color-border)}
+.compare-muted h3,.compare-muted li{color:var(--color-muted)}
+.compare-ink{background:var(--color-ink);color:var(--color-bg)}
+.compare-ink h3{color:var(--color-bg)}
+.compare-ink li{color:rgba(250,246,238,.82)}
+.compare-ink li::before{color:var(--color-accent)}
+.compare-note{margin-top:var(--space-5);font-style:italic;color:var(--color-muted);font-size:var(--text-s)}
+/* 合规声明 + 圆形印章 */
+.ethics{
+  margin-top:var(--space-5);padding:var(--space-5);
+  border:1px dashed var(--color-rule);border-radius:var(--radius-lg);
+  display:grid;grid-template-columns:auto 2fr;gap:var(--space-5);align-items:center;
+}
+.stamp{width:148px;height:148px;flex:none;transform:rotate(-9deg)}
+.ethics h3{font-style:italic;font-weight:500}
+.ethics p{color:var(--color-muted);font-size:var(--text-s)}
+/* ============ 深色结尾 CTA ============ */
+.cta{padding-top:var(--space-7)}
+.cta h2{max-width:20ch;margin:var(--space-4) 0 var(--space-4);color:var(--color-bg)}
+.cta .lede{max-width:52ch;color:var(--color-ink-muted)}
+.cta .eyebrow{color:var(--color-accent)}
+.cta-form{display:flex;gap:var(--space-2);margin-top:var(--space-5);max-width:460px}
+.cta-form input{
+  flex:1;min-width:0;min-height:48px;padding:var(--space-2) var(--space-3);
+  background:transparent;border:1px solid rgba(250,246,238,.4);border-radius:var(--radius-sm);
+  font-family:var(--font-body);font-size:var(--text-s);color:var(--color-bg);
+}
+.cta-form input::placeholder{color:var(--color-ink-muted)}
+.cta .btn{background:var(--color-bg);color:var(--color-ink);border-color:var(--color-bg)}
+.cta .btn::after{background:var(--color-accent)}
+.cta .btn:hover span{color:#FFF}
+.cta .form-msg{color:#F0997B}
+.cta .form-success{border-left-color:var(--color-accent)}
+.cta .micro{margin-top:var(--space-4)}
+/* ============ 页脚 ============ */
+.footer{
+  border-top:1px solid var(--color-ink-border);padding:var(--space-5) 0 var(--space-6);
+}
+.footer-inner{display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-4);flex-wrap:wrap}
+.footer .wordmark-sm{font-family:var(--font-display);font-size:var(--text-l);font-weight:700}
+.footer p{font-size:var(--text-xs);color:var(--color-ink-muted)}
+.footer .colophon{letter-spacing:.14em;text-transform:uppercase}
+/* ============ 动效：入场 + 滚动揭示 ============ */
+.js .reveal{opacity:0;transform:translateY(22px)}
+.js .reveal.in{
+  opacity:1;transform:none;
+  transition:opacity var(--dur-base) var(--ease-out),transform var(--dur-base) var(--ease-out);
+  transition-delay:calc(var(--i,0) * 70ms);
+}
+@media (prefers-reduced-motion:no-preference){
+  .hero-in{animation:rise var(--dur-slow) var(--ease-out) both}
+  .d1{animation-delay:60ms}.d2{animation-delay:140ms}.d3{animation-delay:220ms}
+  .d4{animation-delay:300ms}.d5{animation-delay:380ms}
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+}
+@media (prefers-reduced-motion:reduce){
+  .js .reveal{opacity:1;transform:none;transition:none}
+  .hero-in{animation:none}
+  .ticker-track{animation:none}
+  .steps::before{transform:scaleY(1)}
+  html{scroll-behavior:auto}
+}
+/* ============ 响应式 ============ */
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:var(--space-5);padding-top:var(--space-6)}
+  .hero-visual{margin-top:0}
+  .skim-card{transform:rotate(-.6deg)}
+  .stats{grid-template-columns:1fr;gap:var(--space-4)}
+  .stat{border-left:none;padding-left:0;border-top:1px solid var(--color-ink-border);padding-top:var(--space-4)}
+  .stat:first-child{border-top:none;padding-top:0}
+  .problems li{grid-template-columns:56px 1fr}
+  .problems p{grid-column:2}
+  .compare-panel.active{grid-template-columns:1fr}
+  .ethics{grid-template-columns:1fr;gap:var(--space-3)}
+  .stamp{width:120px;height:120px}
+  .masthead nav{gap:var(--space-4)}
+  .masthead nav .nav-link{display:none}
+  .ruled::before{display:none}
+}
+@media (max-width:560px){
+  .container{padding:0 var(--space-4)}
+  .hero-form,.cta-form{flex-direction:column}
+  .btn{width:100%}
+  .steps li{grid-template-columns:1fr;gap:var(--space-2)}
+  .steps::before{display:none}
+  .step-num{font-size:34px}
+  .rule-meta span:nth-child(3){display:none}
+  .masthead-top span:nth-child(2){display:none}
+}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add("js");</script>
+
+<header class="masthead">
+  <div class="container">
+    <div class="masthead-top">
+      <span>Application season 2026–27</span>
+      <span>Issue 01 — the 30-second skim</span>
+    </div>
+  </div>
+  <div class="container masthead-inner">
+    <a class="wordmark" href="#top">SOPsmith<span class="dot">.</span></a>
+    <nav>
+      <a class="nav-link" href="#how">How it works</a>
+      <a class="nav-link" href="#compare">Why not ChatGPT</a>
+      <a class="nav-cta" href="#waitlist">Join the waitlist</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Ticker：编辑式滚动条带 -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Dec 1 deadline <b>✦</b> Application season 2026–27 <b>✦</b> Structure beats the blank page <b>✦</b> Make your thirty seconds count <b>✦</b>&nbsp;</span>
+    <span>Dec 1 deadline <b>✦</b> Application season 2026–27 <b>✦</b> Structure beats the blank page <b>✦</b> Make your thirty seconds count <b>✦</b>&nbsp;</span>
+  </div>
+</div>
+
+<main id="top">
+  <!-- ============ HERO ============ -->
+  <section class="hero container" aria-label="Introduction">
+    <div class="hero-copy">
+      <p class="eyebrow hero-in d1">For master's &amp; PhD applicants</p>
+      <h1 class="hero-in d2">Your SOP gets <em>thirty seconds.</em> Make them count.</h1>
+      <p class="lede hero-in d3">Admissions officers skim. SOPsmith walks you through a structured draft — then shows you, line by line, what they'd skip.</p>
+      <form class="hero-form hero-in d4" id="hero-form" novalidate>
+        <label class="sr-only" for="hero-email">Email address</label>
+        <input id="hero-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+        <button type="submit" class="btn"><span>Join the waitlist</span></button>
+      </form>
+      <p class="form-msg" id="hero-msg" role="status" aria-live="polite"></p>
+      <p class="micro hero-in d5">Free during beta · Founding members lock $19/month for life · Launching Nov 2026</p>
+    </div>
+    <aside class="hero-visual hero-in d4" aria-label="Live demo of the 30-second skim feedback">
+      <figure class="skim-card" id="skim-card">
+        <div class="skim-head">
+          <span class="skim-title">The 30-second skim</span>
+          <span class="skim-clock" id="skim-clock">0:30</span>
+        </div>
+        <div class="skim-progress"><i id="skim-bar"></i></div>
+        <p class="skim-para">"I have always been <span class="sk sk-cut">passionate about technology since I was a child</span>. Last summer, I <span class="sk sk-vague">worked with my team</span> to build a scheduling tool that cut manual coordination for 200 students by <span class="sk sk-keep">40%</span>."</p>
+        <ul class="sk-notes">
+          <li>Skipped in 6 seconds — every SOP opens this way</li>
+          <li>Vague — replace with the specific thing you did</li>
+          <li class="note-keep">This one stays — a number, an outcome</li>
+        </ul>
+        <div class="sk-foot">
+          <span class="sk-speed">Playing at 6×</span>
+          <button class="sk-replay" id="skim-replay" type="button">Watch again ↺</button>
+        </div>
+      </figure>
+    </aside>
+  </section>
+
+  <!-- ============ 数字带（深色） ============ -->
+  <section class="band-dark" aria-label="The process in numbers">
+    <div class="container">
+      <div class="stats">
+        <div class="stat reveal">
+          <div class="stat-num" data-count="30" data-suffix="s">0</div>
+          <p class="stat-label">seconds — the average first read your SOP actually gets</p>
+        </div>
+        <div class="stat reveal">
+          <div class="stat-num" data-count="3">0</div>
+          <p class="stat-label">questions — what replaces the blank page</p>
+        </div>
+        <div class="stat reveal">
+          <div class="stat-num" data-count="0">0</div>
+          <p class="stat-label">blank pages — what you'll never stare at again</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule-meta reveal"><div class="container"><span>Issue 01</span><span>The problem</span><span>Page 02</span></div></div>
+
+  <!-- ============ 问题区（稿纸，全幅出血） ============ -->
+  <section id="problem" class="section ruled" aria-labelledby="problem-title">
+    <div class="container">
+    <h2 id="problem-title" class="reveal">Sound familiar?</h2>
+    <p class="section-intro dropcap reveal">You are not bad at writing. You are writing into a void — no structure, no feedback, no idea what the person reading it is actually looking for. Four ways the blank page wins:</p>
+    <ol class="problems">
+      <li class="reveal"><span class="num">01</span><h3>The blank page</h3><p>You've opened the document eleven times and written nothing that survives the second read.</p></li>
+      <li class="reveal"><span class="num">02</span><h3>The ChatGPT echo</h3><p>It hands back a fluent essay that could belong to anyone — because it does.</p></li>
+      <li class="reveal"><span class="num">03</span><h3>The guessing game</h3><p>You don't know what admissions officers actually look for, so you can't tell what's missing.</p></li>
+      <li class="reveal"><span class="num">04</span><h3>The undersold experience</h3><p>Your best material — the 3 a.m. debugging, the experiment that failed first — never makes it in.</p></li>
+    </ol>
+    </div>
+  </section>
+
+  <!-- ============ 全宽大引言 ============ -->
+  <section class="pullquote container" aria-label="Pull quote">
+    <figure class="reveal">
+      <blockquote>Admissions officers don't read. They <em>skim</em> — and decide in half a minute.</blockquote>
+      <figcaption>Why SOPsmith is built around the skim, not the page</figcaption>
+    </figure>
+  </section>
+
+  <div class="rule-meta reveal"><div class="container"><span>How it works</span><span>Three questions, one draft, one honest read</span><span>Page 03</span></div></div>
+
+  <!-- ============ 三步时间线 ============ -->
+  <section id="how" class="section container" aria-labelledby="how-title">
+    <h2 id="how-title" class="reveal">Three questions, one draft, one honest read.</h2>
+    <ol class="steps" id="steps">
+      <li class="reveal">
+        <span class="step-num">1</span>
+        <div><h3>Answer three questions</h3><p>Why this program. One defining experience. What's next. The AI follows up when an answer stays vague — the way a good editor would.</p></div>
+      </li>
+      <li class="reveal">
+        <span class="step-num">2</span>
+        <div><h3>Get a draft with a spine</h3><p>Paragraph by paragraph, with word targets, built from your material — not a template with your name pasted in.</p></div>
+      </li>
+      <li class="reveal step-feature">
+        <span class="step-num">3</span>
+        <div><h3>Run the 30-second skim</h3><span class="step-tag">The part ChatGPT won't tell you</span><p>See your SOP the way an admissions officer does: what gets skipped, what reads as fluff, what needs evidence.</p></div>
+      </li>
+    </ol>
+  </section>
+
+  <div class="rule-meta reveal"><div class="container"><span>Comparison</span><span>Why not just ask ChatGPT</span><span>Page 04</span></div></div>
+
+  <!-- ============ 对比区（Tab 切换） ============ -->
+  <section id="compare" class="section container" aria-labelledby="compare-title">
+    <h2 id="compare-title" class="reveal">Why not just ask ChatGPT?</h2>
+    <div class="compare reveal">
+      <div class="compare-tabs" role="tablist" aria-label="Compare approaches">
+        <button class="compare-tab" role="tab" id="tab-b" aria-selected="true" aria-controls="panel-b" type="button">Guided structure + a critic</button>
+        <button class="compare-tab" role="tab" id="tab-a" aria-selected="false" aria-controls="panel-a" type="button" tabindex="-1">A blank chat box</button>
+      </div>
+      <div class="compare-panel active" id="panel-b" role="tabpanel" aria-labelledby="tab-b">
+        <div class="compare-col compare-ink">
+          <h3>Guided structure + a critic</h3>
+          <p>Questions that pull out your specifics. A draft with targets. And a second pass that reads like the person grading you.</p>
+          <ul>
+            <li>Your material, probed and organized</li>
+            <li>Paragraph-level word targets</li>
+            <li>The 30-second skim, before you submit</li>
+          </ul>
+        </div>
+        <div class="compare-col compare-muted">
+          <h3>What you keep</h3>
+          <p>The essay stays yours. The tool just makes sure the right parts of it survive the skim — and the wrong parts don't.</p>
+          <ul>
+            <li>Your voice, your evidence, your call</li>
+            <li>Drafts you can edit, not walls of text</li>
+            <li>Feedback in plain language, not scores</li>
+          </ul>
+        </div>
+      </div>
+      <div class="compare-panel" id="panel-a" role="tabpanel" aria-labelledby="tab-a" hidden>
+        <div class="compare-col compare-muted">
+          <h3>A blank chat box</h3>
+          <p>You prompt, it writes, you paste. Fluent, generic, and completely silent about what's wrong with the result.</p>
+          <ul>
+            <li>Output that could belong to anyone</li>
+            <li>No structure to follow</li>
+            <li>No second opinion on the draft</li>
+          </ul>
+        </div>
+        <div class="compare-col compare-ink">
+          <h3>Where it leaves you</h3>
+          <p>With something that reads well and says nothing — the exact profile of an SOP that gets skimmed past.</p>
+          <ul>
+            <li>Clichés you didn't notice you wrote</li>
+            <li>No signal on what to cut</li>
+            <li>Deadline in three days</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="compare-note reveal">Yes, we use AI too. The difference is the structure around it — and the feedback loop a blank chat box doesn't give you.</p>
+  </section>
+
+  <div class="rule-meta reveal"><div class="container"><span>Who it's for</span><span>And what this isn't</span><span>Page 05</span></div></div>
+
+  <!-- ============ 适用人群 + 合规声明（带印章） ============ -->
+  <section id="who" class="section container" aria-labelledby="who-title">
+    <h2 id="who-title" class="reveal">Who it's for</h2>
+    <p class="lede reveal">Master's and PhD applicants — especially non-native English speakers and career changers — who have strong material and no idea how to present it.</p>
+    <div class="ethics reveal">
+      <svg class="stamp" viewBox="0 0 148 148" role="img" aria-label="Stamp: not a ghostwriting service, your story your voice">
+        <defs>
+          <path id="stamp-top" d="M 74,74 m -58,0 a 58,58 0 1,1 116,0 a 58,58 0 1,1 -116,0"/>
+          <path id="stamp-bottom" d="M 74,74 m 46,0 a 46,46 0 1,0 -92,0 a 46,46 0 1,0 92,0"/>
+        </defs>
+        <circle cx="74" cy="74" r="70" fill="none" stroke="#BE3B2B" stroke-width="2"/>
+        <circle cx="74" cy="74" r="64" fill="none" stroke="#BE3B2B" stroke-width="1"/>
+        <text style="font-family:var(--font-body);font-size:13px;font-weight:600;letter-spacing:.22em;fill:#BE3B2B">
+          <textPath href="#stamp-top" startOffset="50%" text-anchor="middle">NOT A GHOSTWRITING SERVICE</textPath>
+        </text>
+        <text style="font-family:var(--font-body);font-size:11px;letter-spacing:.24em;fill:#BE3B2B">
+          <textPath href="#stamp-bottom" startOffset="50%" text-anchor="middle">YOUR STORY · YOUR VOICE</textPath>
+        </text>
+        <text x="74" y="70" text-anchor="middle" style="font-family:var(--font-display);font-size:22px;font-weight:700;fill:#BE3B2B">SOP</text>
+        <text x="74" y="90" text-anchor="middle" style="font-family:var(--font-display);font-size:22px;font-weight:700;fill:#BE3B2B">smith</text>
+      </svg>
+      <div>
+        <h3>A note on what this isn't</h3>
+        <p>SOPsmith is not a ghostwriting service. It helps you structure, draft, and pressure-test your own story. Your experiences, your voice, your responsibility — the tool just makes sure the right ones survive the skim.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 深色结尾 CTA ============ -->
+  <section id="waitlist" class="cta band-dark" aria-labelledby="cta-title">
+    <div class="container">
+    <p class="eyebrow reveal">Most US deadlines land December 1</p>
+    <h2 id="cta-title" class="reveal">Stop guessing what admissions officers want to see.</h2>
+    <p class="lede reveal">Join the waitlist and be first in when SOPsmith opens. Founding members get $19/month, locked for life — the first 50 only. Regular price at launch: $29/month.</p>
+    <form class="cta-form reveal" id="cta-form" novalidate>
+      <label class="sr-only" for="cta-email">Email address</label>
+      <input id="cta-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+      <button type="submit" class="btn"><span>Join the waitlist</span></button>
+    </form>
+    <p class="form-msg" id="cta-msg" role="status" aria-live="polite"></p>
+    <p class="micro reveal">No spam. One email when we launch, maybe two before that.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer band-dark">
+  <div class="container footer-inner">
+    <span class="wordmark-sm">SOPsmith<span class="dot" style="color:var(--color-accent)">.</span></span>
+    <p class="colophon">Issue 01 · The 30-second skim</p>
+    <p>Built for the 2026–27 application season · © 2026 SOPsmith</p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   交互脚本
+   - 表单三通道：Web3Forms（当前）/ fetch 失败降级整页 POST / Formspree 备用
+   - skim 演示：加载后自动播放一次（6× 速），可重放；reduced-motion 直接终态
+   - 数字滚动 / 对比 Tab / 滚动揭示 / 红笔卡视差
+   ============================================================ */
+(function () {
+  var WAITLIST_ENDPOINT = "";
+  var WEB3FORMS_KEY = "a2d50c4d-ef17-4022-96c9-d9f0683a4d3b";
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 表单 ---------- */
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function wire(formId, inputId, msgId) {
+    var form = document.getElementById(formId);
+    var input = document.getElementById(inputId);
+    var msg = document.getElementById(msgId);
+    if (!form) return;
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var value = input.value.trim();
+
+      if (!EMAIL_RE.test(value)) {
+        msg.textContent = "That email doesn't look right.";
+        input.focus();
+        return;
+      }
+      msg.textContent = "";
+
+      if (WEB3FORMS_KEY) {
+        fetch("https://api.web3forms.com/json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ access_key: WEB3FORMS_KEY, subject: "SOPsmith waitlist", email: value, source: formId, botcheck: "" })
+        }).then(function (res) { return res.json(); }).then(function (data) {
+          if (data && data.success) { showSuccess(form); }
+          else { msg.textContent = "Something went wrong. Try again in a moment."; }
+        }).catch(function () {
+          submitViaNavigation(value);
+        });
+      } else if (WAITLIST_ENDPOINT) {
+        fetch(WAITLIST_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: value, source: formId })
+        }).then(function () {
+          showSuccess(form);
+        }).catch(function () {
+          msg.textContent = "Something went wrong. Try again in a moment.";
+        });
+      } else {
+        showSuccess(form);
+      }
+    });
+  }
+
+  /* 降级通道：静默提交被拦（Cloudflare 挑战对 XHR/fetch 是死路）时改用整页 POST，
+     浏览器过挑战页后自动完成提交并按 _next 跳回本页 */
+  function submitViaNavigation(value) {
+    var f = document.createElement("form");
+    f.method = "POST";
+    f.action = "https://api.web3forms.com/submit";
+    f.style.display = "none";
+    var fields = {
+      access_key: WEB3FORMS_KEY,
+      subject: "SOPsmith waitlist",
+      email: value,
+      botcheck: "",
+      _next: window.location.href.split("?")[0] + "?joined=1"
+    };
+    for (var k in fields) {
+      var i = document.createElement("input");
+      i.type = "hidden";
+      i.name = k;
+      i.value = fields[k];
+      f.appendChild(i);
+    }
+    document.body.appendChild(f);
+    f.submit();
+  }
+
+  function showSuccess(form) {
+    var note = document.createElement("p");
+    note.className = "form-success";
+    note.setAttribute("role", "status");
+    note.textContent = "You're on the list. We'll email you before launch.";
+    form.replaceWith(note);
+  }
+
+  wire("hero-form", "hero-email", "hero-msg");
+  wire("cta-form", "cta-email", "cta-msg");
+
+  if (window.location.search.indexOf("joined=1") !== -1) {
+    ["hero-form", "cta-form"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) { showSuccess(el); }
+    });
+  }
+
+  /* ---------- skim 演示 ---------- */
+  var card = document.getElementById("skim-card");
+  var clock = document.getElementById("skim-clock");
+  var replay = document.getElementById("skim-replay");
+
+  function playSkim() {
+    if (!card) return;
+    /* 重置必须走"无过渡类"：transition-delay 会让直接 remove/add 的重放失效 */
+    card.classList.add("sk-reset");
+    card.classList.remove("skimming", "sk-done");
+    void card.offsetWidth;
+    card.classList.remove("sk-reset");
+    void card.offsetWidth;
+    card.classList.add("skimming");
+    if (clock) { clock.textContent = "0:30"; }
+    if (reduceMotion || !clock) {
+      card.classList.add("sk-done");
+      return;
+    }
+    var total = 4500;
+    var start = Date.now();
+    if (window._skimTimer) { clearInterval(window._skimTimer); }
+    window._skimTimer = setInterval(function () {
+      var elapsed = Date.now() - start;
+      var left = Math.max(0, total - elapsed);
+      var secs = Math.ceil((left / total) * 30);
+      clock.textContent = "0:" + (secs < 10 ? "0" : "") + secs;
+      if (left <= 0) {
+        clearInterval(window._skimTimer);
+        card.classList.add("sk-done");
+      }
+    }, 80);
+  }
+
+  if (card) {
+    if (reduceMotion) {
+      card.classList.add("skimming", "sk-done");
+    } else {
+      setTimeout(playSkim, 1400); /* 等入场动画差不多再开始演示 */
+    }
+    if (replay) {
+      replay.addEventListener("click", playSkim);
+    }
+  }
+
+  /* ---------- 数字滚动 ---------- */
+  function countUp(el) {
+    var target = parseInt(el.getAttribute("data-count"), 10) || 0;
+    var suffix = el.getAttribute("data-suffix") || "";
+    if (reduceMotion) { el.textContent = target + suffix; return; }
+    var start = null;
+    var dur = 1100;
+    function frame(t) {
+      if (!start) { start = t; }
+      var p = Math.min(1, (t - start) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (p < 1) { requestAnimationFrame(frame); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- 对比 Tab ---------- */
+  var tabs = document.querySelectorAll(".compare-tab");
+  function selectTab(tab) {
+    tabs.forEach(function (t) {
+      var selected = t === tab;
+      t.setAttribute("aria-selected", selected ? "true" : "false");
+      t.tabIndex = selected ? 0 : -1;
+      var panel = document.getElementById(t.getAttribute("aria-controls"));
+      if (panel) {
+        panel.classList.toggle("active", selected);
+        if (selected) { panel.removeAttribute("hidden"); }
+        else { panel.setAttribute("hidden", ""); }
+      }
+    });
+  }
+  tabs.forEach(function (t, idx) {
+    t.addEventListener("click", function () { selectTab(t); });
+    t.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        var next = tabs[(idx + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+        selectTab(next);
+        next.focus();
+      }
+    });
+  });
+
+  /* ---------- 滚动揭示 + 数字 + 时间线 ---------- */
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) { return; }
+        en.target.classList.add("in");
+        if (en.target.hasAttribute("data-count")) { countUp(en.target); }
+        io.unobserve(en.target);
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+    document.querySelectorAll("[data-count]").forEach(function (el) { io.observe(el); });
+    var steps = document.getElementById("steps");
+    if (steps) { io.observe(steps); }
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+    document.querySelectorAll("[data-count]").forEach(countUp);
+    var stepsEl = document.getElementById("steps");
+    if (stepsEl) { stepsEl.classList.add("in"); }
+  }
+
+  /* ---------- 红笔卡视差（仅桌面精确指针） ---------- */
+  var finePointer = window.matchMedia("(pointer: fine)").matches;
+  var visual = document.querySelector(".hero-visual");
+  if (card && visual && finePointer && !reduceMotion) {
+    visual.addEventListener("pointermove", function (e) {
+      var r = visual.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - 0.5;
+      var y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = "rotate(-1.3deg) rotateY(" + (x * 5).toFixed(2) + "deg) rotateX(" + (-y * 4).toFixed(2) + "deg)";
+    });
+    visual.addEventListener("pointerleave", function () {
+      card.style.transform = "rotate(-1.3deg)";
+    });
+  }
+})();
+</script>
+</body>
+</html>

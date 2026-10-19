@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工作台 · 方片蝈蝈</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FAFAF7'/%3E%3Crect x='5' y='5' width='18' height='18' fill='none' stroke='%2317140F' stroke-width='2'/%3E%3Cpath d='M7 22L21 8' stroke='%23D8332A' stroke-width='2'/%3E%3Crect x='21' y='21' width='7' height='7' fill='%23E9F559' stroke='%2317140F' stroke-width='1.5'/%3E%3C/svg%3E">
+</head>
+<body class="app-body">
+
+<div class="app">
+
+  <!-- ============================ 侧栏 ============================ -->
+  <aside class="sidebar">
+    <a class="sb-brand" href="index.html" title="回到首页">
+      <span class="brand-mark"></span>
+      <span class="brand-text">
+        <span class="brand-name">方片蝈蝈</span>
+        <span class="brand-sub">AI 简历工坊</span>
+      </span>
+    </a>
+
+    <button class="sb-new" id="newResume">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span>新建简历</span>
+    </button>
+
+    <div class="sb-label">Workspace</div>
+    <nav class="sb-nav">
+      <a class="nav-item on" href="#dashboard" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+        <span>工作台</span>
+      </a>
+      <a class="nav-item" href="#editor" data-view="editor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="M14.5 6.5 17.5 9.5"/></svg>
+        <span>简历编辑器</span>
+        <span class="nbadge">2</span>
+      </a>
+      <a class="nav-item" href="#match" data-view="match">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        <span>岗位匹配</span>
+      </a>
+      <a class="nav-item" href="#board" data-view="board">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="10" rx="1.5"/><rect x="16" y="4" width="5" height="13" rx="1.5"/></svg>
+        <span>投递看板</span>
+      </a>
+      <a class="nav-item" href="#templates" data-view="templates">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></svg>
+        <span>模板库</span>
+      </a>
+    </nav>
+
+    <div class="sb-label" style="margin-top:16px">Account</div>
+    <nav class="sb-nav" style="margin-bottom:0">
+      <a class="nav-item" href="#account" data-view="account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.9-3.4 3.7-5.4 7.2-5.4S18.3 16.6 19.2 20"/></svg>
+        <span>账号与积分</span>
+      </a>
+    </nav>
+
+    <div class="sb-credits">
+      <div class="sc-top">
+        <span class="sc-label">积分余额</span>
+      </div>
+      <div class="sc-num">338<i>分</i></div>
+      <div class="bar bar-static" style="--v:.42"><i></i></div>
+      <div class="sc-sub">约可生成 8 份简历</div>
+    </div>
+
+    <div class="sb-user" id="sbUser">
+      <span class="avatar">苇</span>
+      <div>
+        <div class="su-name">一苇</div>
+        <div class="su-plan">免费版 · 138****8888</div>
+      </div>
+      <svg class="su-more" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+    </div>
+  </aside>
+
+  <!-- ============================ 主区 ============================ -->
+  <div class="main">
+
+    <header class="topbar">
+      <div class="tb-title">
+        <span>方片蝈蝈</span>
+        <span class="sep">/</span>
+        <span class="cur" id="crumb">工作台</span>
+      </div>
+
+      <label class="tb-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+        <input type="search" placeholder="搜岗位、公司或简历" aria-label="搜索">
+        <kbd>⌘K</kbd>
+      </label>
+
+      <div class="tb-actions">
+        <button class="icon-btn" id="themeBtn" aria-label="切换深浅色">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <circle cx="12" cy="12" r="4.2"/>
+            <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/>
+          </svg>
+        </button>
+        <button class="tb-chip accent" id="creditsChip"><b>338</b> 积分</button>
+        <button class="avatar avatar-lg" id="avatarBtn" aria-label="账号">苇</button>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+
+      <!-- ======================= 工作台 ======================= -->
+      <section class="view on" data-view-panel="dashboard">
+        <div class="view-head">
+          <div>
+            <h1 id="greeting">上午好，一苇</h1>
+            <p>10 月 17 日 周六 · 有 2 个岗位待跟进，1 份草稿没写完</p>
+          </div>
+          <div class="vh-actions">
+            <button class="btn btn-outline btn-sm" id="importBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+              导入现有简历
+            </button>
+            <button class="btn btn-primary btn-sm" data-go="editor">继续填写</button>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="s-label">在用简历</div>
+            <div class="s-num">4<i>份</i></div>
+            <div class="s-foot">含 1 份进行中的草稿</div>
+          </div>
+          <div class="stat">
+            <div class="s-label">近 30 天投递</div>
+            <div class="s-num">12<i>次</i></div>
+            <div class="s-foot">官网 5 · 内推 3 · 平台 4</div>
+          </div>
+          <div class="stat">
+            <div class="s-label">面试邀约</div>
+            <div class="s-num">3<i>个</i></div>
+            <div class="s-foot">最近一场 10 / 12（周一）</div>
+          </div>
+          <div class="stat">
+            <div class="s-label">待跟进</div>
+            <div class="s-num">2<i>个</i></div>
+            <div class="s-foot" style="color:var(--red-ink)">超 5 天没有回音</div>
+          </div>
+        </div>
+
+        <div class="dash">
+          <div>
+            <article class="panel continue">
+              <div class="c-top">
+                <span class="c-kicker">CONTINUE · 上次编辑于 2 小时前</span>
+              </div>
+              <h2>产品经理 · 腾讯定向版</h2>
+              <div class="c-sub">目标岗位：腾讯 · 产品经理（社交增长）　|　版本 v3</div>
+
+              <div class="c-bar">
+                <div class="bar" style="--v:.68"><i></i></div>
+                <div class="c-meta">
+                  <b>68%</b> 完成度
+                  <span>·</span>
+                  <span>还差 <b>3 项</b>：量化数据、SQL、AIGC 经验</span>
+                </div>
+              </div>
+
+              <div class="c-tags">
+                <span class="tag tag-accent">已补 8 / 10 关键词</span>
+                <span class="tag tag-red">2 条批注未处理</span>
+                <span class="tag">预计 82 分</span>
+                <span class="tag">一页</span>
+              </div>
+
+              <div class="c-actions">
+                <button class="btn btn-primary btn-sm" data-go="editor">继续编辑</button>
+                <button class="btn btn-outline btn-sm" data-go="match">重新匹配岗位</button>
+              </div>
+            </article>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h3>最近编辑</h3>
+                <span class="ph-sub">4 份简历</span>
+                <button class="ph-action link-arrow" data-go="editor">全部 →</button>
+              </div>
+              <div class="mini-list">
+                <div class="mini-row" data-go="editor">
+                  <span class="mini-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h4"/></svg>
+                  </span>
+                  <div class="mini-main">
+                    <div class="mini-t">产品经理 · 腾讯定向版</div>
+                    <div class="mini-d">2 小时前 · 68% · 覆盖 8 / 10 关键词</div>
+                  </div>
+                  <span class="mini-r">编辑中</span>
+                </div>
+                <div class="mini-row">
+                  <span class="mini-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h4"/></svg>
+                  </span>
+                  <div class="mini-main">
+                    <div class="mini-t">产品经理 · 通用版</div>
+                    <div class="mini-d">昨天 18:40 · 92% · 已导出 PDF</div>
+                  </div>
+                  <span class="mini-r">已导出</span>
+                </div>
+                <div class="mini-row">
+                  <span class="mini-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h4"/></svg>
+                  </span>
+                  <div class="mini-main">
+                    <div class="mini-t">运营经理 · 秋招版</div>
+                    <div class="mini-d">10 月 12 日 · 74% · 缺 2 个关键词</div>
+                  </div>
+                  <span class="mini-r">已完成</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel" style="margin-bottom:18px">
+              <div class="panel-head">
+                <h3>岗位匹配推荐</h3>
+                <button class="ph-action link-arrow" data-go="match">去匹配 →</button>
+              </div>
+
+              <div class="job-card" data-go="match">
+                <div class="job-top">
+                  <span class="job-logo">腾</span>
+                  <div>
+                    <div class="job-t">产品经理（社交增长）</div>
+                    <div class="job-s">腾讯 · 深圳 · 5 年</div>
+                  </div>
+                  <div class="job-score"><b>82</b><span>可投递</span></div>
+                </div>
+                <div class="job-foot">
+                  <span class="tag tag-accent">命中 8</span>
+                  <span class="tag tag-red">缺 2</span>
+                  <span class="go">补齐后 93 →</span>
+                </div>
+              </div>
+
+              <div class="job-card" data-go="match">
+                <div class="job-top">
+                  <span class="job-logo">字</span>
+                  <div>
+                    <div class="job-t">增长产品经理</div>
+                    <div class="job-s">字节跳动 · 深圳 · 3–5 年</div>
+                  </div>
+                  <div class="job-score"><b class="low">74</b><span>待补齐</span></div>
+                </div>
+                <div class="job-foot">
+                  <span class="tag">命中 7</span>
+                  <span class="tag tag-red">缺 3</span>
+                  <span class="go">看看差在哪 →</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h3>待跟进</h3>
+                <span class="ph-sub">2 个超 5 天</span>
+                <button class="ph-action link-arrow" data-go="board">看板 →</button>
+              </div>
+              <div class="mini-list">
+                <div class="mini-row" data-go="board">
+                  <span class="mini-ico" style="background:var(--red-soft);color:var(--red-ink)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+                  </span>
+                  <div class="mini-main">
+                    <div class="mini-t">美团 · 产品经理</div>
+                    <div class="mini-d" data-since="11">11 天前投递 · 已 11 天无回音</div>
+                  </div>
+                  <span class="mini-r" style="color:var(--red-ink)">去跟进</span>
+                </div>
+                <div class="mini-row" data-go="board">
+                  <span class="mini-ico" style="background:var(--red-soft);color:var(--red-ink)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+                  </span>
+                  <div class="mini-main">
+                    <div class="mini-t">网易 · 高级产品经理</div>
+                    <div class="mini-d" data-since="10">10 天前投递 · 已 10 天无回音</div>
+                  </div>
+                  <span class="mini-r" style="color:var(--red-ink)">去跟进</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= 编辑器 ======================= -->
+      <section class="view" data-view-panel="editor">
+        <div class="view-head">
+          <div>
+            <h1>产品经理 · 腾讯定向版</h1>
+            <p>最后保存 2 分钟前 · 版本 v3 · 目标岗位 产品经理（社交增长）</p>
+          </div>
+          <div class="vh-actions">
+            <span class="tag" id="saveState">✓ 已保存</span>
+            <button class="btn btn-outline btn-sm" data-go="match">重新匹配</button>
+            <button class="btn btn-primary btn-sm" id="exportBtn">导出 PDF</button>
+          </div>
+        </div>
+
+        <div class="ed">
+          <!-- 左：表单 -->
+          <div class="ed-form">
+            <div class="ed-toolbar">
+              <button class="tool on">内容</button>
+              <button class="tool" id="toolStyle">版式</button>
+              <span class="tool-sep"></span>
+              <button class="tool">A4 · 一页</button>
+              <button class="tool" id="annoBtn">显示批注</button>
+              <div class="right">
+                <span>版本 v3</span>
+                <span class="dot" style="width:3px;height:3px;background:var(--dim)"></span>
+                <button class="tool">历史</button>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-head">
+                <span class="fh-n">01</span><h4>基本信息</h4>
+                <svg class="fh-r" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="form-body">
+                <div class="fgrid">
+                  <div class="fitem"><label>姓名</label><div class="editable" contenteditable="true" data-bind="name" data-ph="你的名字">林知远</div></div>
+                  <div class="fitem"><label>求职意向</label><div class="editable" contenteditable="true" data-bind="role" data-ph="目标岗位">产品经理（社交增长）</div></div>
+                  <div class="fitem"><label>城市</label><div class="editable" contenteditable="true" data-ph="城市">深圳</div></div>
+                  <div class="fitem"><label>工作年限</label><div class="editable" contenteditable="true" data-ph="年限">5 年</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-head">
+                <span class="fh-n">02</span><h4>工作经历</h4>
+                <svg class="fh-r" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="form-body">
+                <div class="fgrid">
+                  <div class="fitem"><label>公司</label><div class="editable" contenteditable="true" data-bind="company" data-ph="公司名">星河科技</div></div>
+                  <div class="fitem"><label>职位</label><div class="editable" contenteditable="true" data-ph="职位">产品经理</div></div>
+                </div>
+                <div class="fitem">
+                  <label>工作描述</label>
+                  <div class="editable" contenteditable="true" id="edDesc1" data-bind="desc1" data-ph="写清楚你负责什么、做成了什么">负责<span class="hl">需求文档撰写与会议记录</span>，主导 3 条业务线的需求定义与优先级排序，推动版本按期上线；DAU 从 12 万增长到 28 万，付费转化率提升 3.2 个百分点。</div>
+                </div>
+                <button class="add-line">＋ 添加一段经历</button>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-head">
+                <span class="fh-n">03</span><h4>项目经历</h4>
+                <svg class="fh-r" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="form-body">
+                <div class="fitem"><label>项目名称</label><div class="editable" contenteditable="true" data-bind="proj" data-ph="项目名">会员体系改版</div></div>
+                <div class="fitem">
+                  <label>项目描述</label>
+                  <div class="editable" contenteditable="true" id="edDesc2" data-bind="desc2" data-ph="这个项目解决了什么问题">搭建会员分层模型，完成 6 个权益包的定价与灰度。熟练使用 Excel 与 Tableau，缺少 SQL 取数能力的描述。</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-head">
+                <span class="fh-n">04</span><h4>技能与教育</h4>
+                <svg class="fh-r" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="form-body">
+                <div class="fitem"><label>技能</label><div class="editable" contenteditable="true" data-bind="skills" data-ph="用 / 分隔">数据分析 / 用户增长 / 需求文档 / 项目管理 / A/B 测试 / 跨部门协作 / 商业化 / 竞品分析</div></div>
+                <div class="fitem"><label>教育</label><div class="editable" contenteditable="true" data-bind="edu" data-ph="学校 · 专业 · 学历">中山大学 · 信息管理与信息系统 · 本科</div></div>
+              </div>
+            </div>
+
+            <!-- AI 建议 -->
+            <div class="ai-panel">
+              <div class="ai-head">
+                <span class="ai-dot">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4l1.8 5.2L19 11l-5.2 1.8L12 18l-1.8-5.2L5 11l5.2-1.8z"/></svg>
+                </span>
+                <h4>AI 建议</h4>
+                <span class="ai-count">3 条 · 均未写入</span>
+              </div>
+              <div class="ai-list">
+                <div class="ai-card picked">
+                  <span class="ai-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg></span>
+                  <div class="ai-body">
+                    <span class="ai-k">建议 · 顺序</span>
+                    <div class="ai-t">「<span class="del">需求文档撰写与会议记录</span>」换成「<span class="ins">主导 3 条业务线的需求定义与优先级排序</span>」，把定义能力提到第一句。</div>
+                  </div>
+                </div>
+                <div class="ai-card picked">
+                  <span class="ai-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg></span>
+                  <div class="ai-body">
+                    <span class="ai-k">缺失 · 关键词</span>
+                    <div class="ai-t">岗位要求 <b>SQL 取数</b>。补一句「用 SQL 独立完成留存与漏斗分析」，比「了解 SQL」可信。</div>
+                  </div>
+                </div>
+                <div class="ai-card">
+                  <span class="ai-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg></span>
+                  <div class="ai-body">
+                    <span class="ai-k">建议 · 量化</span>
+                    <div class="ai-t">DAU 增长缺基线。补上「<b>12 万 → 28 万，周期 9 个月</b>」，比「大幅增长」可信。</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ai-foot">
+                <span class="tiny">只生成方案，勾选后才写入。写入也存成新版本，可回滚。</span>
+                <button class="btn btn-primary btn-sm" id="aiApply">应用选中 2 条</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右：A4 预览 -->
+          <aside class="preview">
+            <div class="pv-head">
+              <h4>A4 预览</h4>
+              <span class="tag" style="height:19px;font-size:9px">实时</span>
+              <div class="pv-tools">
+                <button class="pv-btn" id="zoomOut" aria-label="缩小">−</button>
+                <span class="mono" id="zoomVal" style="font-size:10px;color:var(--muted);min-width:32px;text-align:center">100%</span>
+                <button class="pv-btn" id="zoomIn" aria-label="放大">＋</button>
+              </div>
+            </div>
+
+            <div class="pv-stage">
+              <div class="a4" id="a4">
+                <div class="a4-name" id="pvName">林知远</div>
+                <div class="a4-role" id="pvRole">产品经理（社交增长） · 5 年 · 深圳</div>
+                <div class="a4-rule"></div>
+
+                <div class="a4-h">工作经历</div>
+                <div class="a4-job"><span id="pvCompany">星河科技</span> · 产品经理　2021.06 – 至今</div>
+                <p class="a4-line a4-anno" data-n="1" id="pvDesc1">负责需求文档撰写与会议记录，主导 3 条业务线的需求定义与优先级排序；DAU 从 12 万增长到 28 万。</p>
+                <p class="a4-line">搭建会员分层模型，完成 6 个权益包的定价与灰度，付费转化率提升 3.2 个百分点。</p>
+                <p class="a4-line">通过 A/B 测试验证 4 组定价方案，最终方案使 ARPU 提升 18%。</p>
+
+                <div class="a4-job" style="margin-top:5px">云启科技 · 产品经理　2019.07 – 2021.05</div>
+                <p class="a4-line">负责用户增长实验体系，半年累计上线 40+ 场实验，沉淀 12 条可复用策略。</p>
+                <p class="a4-line">主导新手引导改版，次日留存从 31% 提升到 39%。</p>
+
+                <div class="a4-h">项目经历</div>
+                <div class="a4-job">会员体系改版</div>
+                <p class="a4-line a4-anno" data-n="2" id="pvDesc2">搭建会员分层模型，完成 6 个权益包的定价与灰度；熟练使用 Excel 与 Tableau，缺少 SQL 取数能力的描述。</p>
+                <p class="a4-line">用 SQL 独立完成留存与漏斗分析，输出 12 页分析报告，推动 3 项策略落地。</p>
+
+                <div class="a4-h">技能</div>
+                <p class="a4-line" id="pvSkills">数据分析 / 用户增长 / 需求文档 / 项目管理 / A/B 测试 / 跨部门协作 / 商业化 / 竞品分析</p>
+                <p class="a4-line">SQL / Tableau / Figma / 英语（CET-6）</p>
+
+                <div class="a4-h">教育</div>
+                <p class="a4-line" id="pvEdu">中山大学 · 信息管理与信息系统 · 本科</p>
+              </div>
+            </div>
+
+            <div class="pv-foot">
+              <span class="tag tag-outline">A4 · 一页</span>
+              <span>预计导出 1 页</span>
+              <span style="margin-left:auto">✓ 已保存</span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ======================= 岗位匹配 ======================= -->
+      <section class="view" data-view-panel="match">
+        <div class="view-head">
+          <div>
+            <h1>岗位匹配</h1>
+            <p>粘贴一段 JD，30 秒内拿到四个维度与逐词命中情况。分析失败不扣积分。</p>
+          </div>
+          <div class="vh-actions">
+            <button class="btn btn-outline btn-sm" id="clearJd">清空重贴</button>
+            <button class="btn btn-primary btn-sm" id="runMatch">开始匹配</button>
+          </div>
+        </div>
+
+        <div class="match-view">
+          <div>
+            <div class="drop" id="drop">
+              <textarea id="jdText" spellcheck="false">【腾讯 · 产品经理（社交增长）· 深圳】
+
+岗位职责
+1. 负责社交产品的增长策略，围绕用户增长拆解指标并落地实验；
+2. 独立完成需求文档与项目管理，推动跨部门协作按期上线；
+3. 基于数据分析与 A/B 测试判断效果，持续迭代。
+
+任职要求
+1. 5 年以上产品经验，有商业化或增值业务经验优先；
+2. 熟练使用 SQL 取数与分析，能独立完成竞品分析；
+3. 有 AIGC 相关经验，理解大模型在内容场景的落地边界。</textarea>
+              <div class="drop-foot">
+                <span class="tag">已识别 612 字</span>
+                <span class="tag tag-outline">上限 20,000 字</span>
+                <span class="tiny">粘贴时会自动剥离手机号、邮箱与微信</span>
+              </div>
+            </div>
+
+            <div class="steps" id="steps">
+              <div class="step" data-step="1">
+                <span class="step-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg></span>
+                <span>解析 JD 结构与硬性条件</span>
+                <span class="sp">01</span>
+              </div>
+              <div class="step" data-step="2">
+                <span class="step-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg></span>
+                <span>提取岗位关键词 · 共 10 个</span>
+                <span class="sp">02</span>
+              </div>
+              <div class="step" data-step="3">
+                <span class="step-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg></span>
+                <span>对照简历逐条打分</span>
+                <span class="sp">03</span>
+              </div>
+            </div>
+
+            <div class="panel panel-flat" style="margin-top:16px;padding:14px 16px;border-style:dashed">
+              <div class="row" style="align-items:flex-start;gap:9px">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.8" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+                <p class="tiny" style="line-height:1.7">三种失败都不扣积分：<b style="color:var(--ink)">太短</b> → 补到 300–800 字；<b style="color:var(--ink)">不像 JD</b> → 去岗位库搜；<b style="color:var(--ink)">超长</b> → 只留职责与要求。原文一直留着，改完随时重试。</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 报告 -->
+          <aside class="report" id="matchReport">
+            <div class="report-empty">
+              <div class="re-ico">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>
+              </div>
+              <h4>还没有匹配结果</h4>
+              <p>左侧 JD 已预填一份示例。点右上角「开始匹配」，看看 82 分是怎么算出来的。</p>
+            </div>
+
+            <div class="report-body">
+              <div class="rb-head">
+                <div class="rb-score"><b id="rbScore">82</b><span>/100</span></div>
+                <div class="rb-verdict" id="rbVerdict">在 <b>可投递</b> 区间 —— 补齐 2 个缺失词，预计可达 <b>93</b>。</div>
+              </div>
+
+              <div class="rb-sec">
+                <h5>四个维度</h5>
+                <div class="rb-dim"><span>技能关键词</span><div class="bar bar-static" style="--v:.8"><i></i></div><b>80%</b></div>
+                <div class="rb-dim"><span>经验年限</span><div class="bar bar-static" style="--v:1"><i></i></div><b>100%</b></div>
+                <div class="rb-dim"><span>行业匹配</span><div class="bar bar-static" style="--v:.72"><i></i></div><b>72%</b></div>
+                <div class="rb-dim"><span>学历要求</span><div class="bar bar-static" style="--v:1"><i></i></div><b>100%</b></div>
+              </div>
+
+              <div class="rb-sec">
+                <h5>关键词 · 命中 8</h5>
+                <div class="rb-kw">
+                  <span class="kw-chip">数据分析</span><span class="kw-chip">用户增长</span>
+                  <span class="kw-chip">需求文档</span><span class="kw-chip">项目管理</span>
+                  <span class="kw-chip">A/B 测试</span><span class="kw-chip">跨部门协作</span>
+                  <span class="kw-chip">商业化</span><span class="kw-chip">竞品分析</span>
+                </div>
+              </div>
+
+              <div class="rb-sec">
+                <h5>关键词 · 缺失 2</h5>
+                <div class="rb-kw" id="rbMiss">
+                  <span class="kw-chip miss">SQL</span>
+                  <span class="kw-chip miss">AIGC 相关经验</span>
+                </div>
+              </div>
+
+              <div class="rb-actions">
+                <button class="btn btn-primary btn-sm" id="fixBtn2">生成补全方案</button>
+                <button class="btn btn-outline btn-sm" data-go="editor">去编辑器</button>
+              </div>
+
+              <div class="rb-sec" style="border-top:1px solid var(--line)">
+                <p class="tiny" style="line-height:1.7">82 = 80×55% + 72×25% + 100×12% + 100×8%。<br>只生成方案，不会自动改写简历。</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ======================= 投递看板 ======================= -->
+      <section class="view" data-view-panel="board">
+        <div class="view-head">
+          <div>
+            <h1>投递看板</h1>
+            <p>15 个岗位 · 拖动卡片改状态 · 投递只记录，不代投</p>
+          </div>
+          <div class="vh-actions">
+            <button class="btn btn-outline btn-sm" id="addApp">＋ 添加投递</button>
+          </div>
+        </div>
+
+        <div class="board" id="board">
+
+          <div class="kcol" data-col="interview">
+            <div class="kcol-head">
+              <span class="kh-dot" style="background:var(--red)"></span>
+              <span class="kh-t">面试中</span>
+              <span class="kh-c">3</span>
+              <button class="kh-add" aria-label="添加">＋</button>
+            </div>
+            <div class="kcol-body">
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">腾</span><div><div class="kcard-t">产品经理（社交增长）</div><div class="kcard-s">腾讯 · 深圳</div></div></div>
+                <div class="kcard-foot"><span class="tag tag-accent">二面</span><span class="kdate">10 / 12</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">阿</span><div><div class="kcard-t">用户增长产品</div><div class="kcard-s">阿里巴巴 · 杭州</div></div></div>
+                <div class="kcard-foot"><span class="tag tag-accent">一面</span><span class="kdate">10 / 09</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">快</span><div><div class="kcard-t">商业化产品经理</div><div class="kcard-s">快手 · 北京</div></div></div>
+                <div class="kcard-foot"><span class="tag">待约面</span><span class="kdate">10 / 08</span></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="kcol" data-col="applied">
+            <div class="kcol-head">
+              <span class="kh-dot" style="background:var(--ink)"></span>
+              <span class="kh-t">已投递</span>
+              <span class="kh-c">5</span>
+              <button class="kh-add" aria-label="添加">＋</button>
+            </div>
+            <div class="kcol-body">
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">字</span><div><div class="kcard-t">增长产品经理</div><div class="kcard-s">字节跳动 · 深圳</div></div></div>
+                <div class="kcard-foot"><span class="tag">已投 3 天</span><span class="kdate">10 / 14</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">小</span><div><div class="kcard-t">产品经理 · 社区</div><div class="kcard-s">小红书 · 上海</div></div></div>
+                <div class="kcard-foot"><span class="tag">已投 4 天</span><span class="kdate">10 / 13</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">b</span><div><div class="kcard-t">高级产品经理</div><div class="kcard-s">哔哩哔哩 · 上海</div></div></div>
+                <div class="kcard-foot"><span class="tag">已投 5 天</span><span class="kdate">10 / 12</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">滴</span><div><div class="kcard-t">策略产品经理</div><div class="kcard-s">滴滴 · 北京</div></div></div>
+                <div class="kcard-foot"><span class="tag">已投 6 天</span><span class="kdate">10 / 11</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">京</span><div><div class="kcard-t">产品经理 · 增长</div><div class="kcard-s">京东 · 北京</div></div></div>
+                <div class="kcard-foot"><span class="tag">已投 7 天</span><span class="kdate">10 / 10</span></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="kcol" data-col="follow">
+            <div class="kcol-head">
+              <span class="kh-dot" style="background:var(--red-ink)"></span>
+              <span class="kh-t">待跟进</span>
+              <span class="kh-c">3</span>
+              <button class="kh-add" aria-label="添加">＋</button>
+            </div>
+            <div class="kcol-body">
+              <article class="kcard warn" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">美</span><div><div class="kcard-t">产品经理 · 到店</div><div class="kcard-s">美团 · 北京</div></div></div>
+                <div class="kcard-foot" data-since="11"><span class="tag tag-red">11 天无回音</span><span class="kdate">10 / 06</span></div>
+              </article>
+              <article class="kcard warn" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">网</span><div><div class="kcard-t">高级产品经理</div><div class="kcard-s">网易 · 广州</div></div></div>
+                <div class="kcard-foot" data-since="10"><span class="tag tag-red">10 天无回音</span><span class="kdate">10 / 07</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">携</span><div><div class="kcard-t">产品经理 · 内容</div><div class="kcard-s">携程 · 上海</div></div></div>
+                <div class="kcard-foot" data-since="9"><span class="tag">已跟进 1 次</span><span class="kdate">10 / 08</span></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="kcol" data-col="closed">
+            <div class="kcol-head">
+              <span class="kh-dot" style="background:var(--dim)"></span>
+              <span class="kh-t">已结束</span>
+              <span class="kh-c">4</span>
+              <button class="kh-add" aria-label="添加">＋</button>
+            </div>
+            <div class="kcol-body">
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">腾</span><div><div class="kcard-t">产品运营</div><div class="kcard-s">腾讯 · 深圳</div></div></div>
+                <div class="kcard-foot"><span class="tag">已收感谢信</span><span class="kdate">09 / 28</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">百</span><div><div class="kcard-t">产品经理</div><div class="kcard-s">百度 · 北京</div></div></div>
+                <div class="kcard-foot"><span class="tag">已拒绝</span><span class="kdate">09 / 25</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">s</span><div><div class="kcard-t">产品经理</div><div class="kcard-s">SHEIN · 广州</div></div></div>
+                <div class="kcard-foot"><span class="tag">一面未过</span><span class="kdate">09 / 22</span></div>
+              </article>
+              <article class="kcard" draggable="true">
+                <div class="kcard-top"><span class="kcard-logo">华</span><div><div class="kcard-t">产品经理</div><div class="kcard-s">华为 · 深圳</div></div></div>
+                <div class="kcard-foot"><span class="tag">已撤回</span><span class="kdate">09 / 18</span></div>
+              </article>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="board-note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+          <span>其中 <b>2 个</b> 超 5 天没有回音，建议本周内跟进一次。拖动卡片即可改状态，改动会写进版本记录。</span>
+        </div>
+      </section>
+
+      <!-- ======================= 模板库 ======================= -->
+      <section class="view" data-view-panel="templates">
+        <div class="view-head">
+          <div>
+            <h1>模板库</h1>
+            <p>24 款版式 · 免费 6 款 · 全部可预览，导出时才需要会员</p>
+          </div>
+          <div class="vh-actions">
+            <button class="btn btn-outline btn-sm">按使用量排序</button>
+          </div>
+        </div>
+
+        <div class="toolbar-line">
+          <div class="filters" id="tplFilters2">
+            <button class="filter on" data-f="all">全部</button>
+            <button class="filter" data-f="free">免费</button>
+            <button class="filter" data-f="single">单栏</button>
+            <button class="filter" data-f="two">双栏</button>
+            <button class="filter" data-f="side">侧栏</button>
+            <button class="filter" data-f="timeline">时间线</button>
+          </div>
+          <span class="count" id="tplCount">24 款</span>
+        </div>
+
+        <div class="tgrid" id="tplGrid2"></div>
+
+        <div class="board-note" style="margin-top:20px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+          <span>免费 6 款锁在第 1 / 2 / 3 / 5 / 10 / 15 名，每个大类各留一款。改名单会直接影响付费转化，后台需超管二次确认。</span>
+        </div>
+      </section>
+
+      <!-- ======================= 账号 ======================= -->
+      <section class="view" data-view-panel="account">
+        <div class="view-head">
+          <div>
+            <h1>账号与积分</h1>
+            <p>1 元 = 1 积分 · 失败与超时自动退回</p>
+          </div>
+        </div>
+
+        <div class="acc-grid">
+          <div>
+            <div class="panel" style="margin-bottom:18px">
+              <div class="acc-user">
+                <span class="avatar avatar-lg">苇</span>
+                <div>
+                  <div class="acc-name">一苇</div>
+                  <div class="acc-sub">林知远 · 138****8888 · 已实名</div>
+                </div>
+                <span class="pill pill-line" style="margin-left:auto">免费版</span>
+              </div>
+              <div class="acc-rows">
+                <div class="acc-row"><span class="ar-k">会员状态</span><span class="ar-v">免费版</span><a class="ar-r" href="#pricing">升级会员 →</a></div>
+                <div class="acc-row"><span class="ar-k">积分余额</span><span class="ar-v">338 分</span><a class="ar-r" href="#">充值 →</a></div>
+                <div class="acc-row"><span class="ar-k">在用简历</span><span class="ar-v">4 份 · 含 1 份草稿</span><a class="ar-r" href="#editor" data-go="editor">管理 →</a></div>
+                <div class="acc-row"><span class="ar-k">登录方式</span><span class="ar-v">手机号 138****8888</span><a class="ar-r" href="#">更换 →</a></div>
+                <div class="acc-row"><span class="ar-k">数据与隐私</span><span class="ar-v">境内存储 · 原文件解析后删除</span><a class="ar-r" href="#">查看 →</a></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><h3>最近订单</h3><span class="ph-sub">近 90 天</span></div>
+              <div class="mini-list">
+                <div class="mini-row">
+                  <span class="mini-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
+                  </span>
+                  <div class="mini-main"><div class="mini-t">积分充值 · 300 分</div><div class="mini-d">2026-09-28 14:22 · 微信支付</div></div>
+                  <span class="mini-r">¥30.00</span>
+                </div>
+                <div class="mini-row">
+                  <span class="mini-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
+                  </span>
+                  <div class="mini-main"><div class="mini-t">AI 批注 · 10 次</div><div class="mini-d">2026-09-20 09:41 · 余额扣减</div></div>
+                  <span class="mini-r">−50 分</span>
+                </div>
+                <div class="mini-row">
+                  <span class="mini-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+                  </span>
+                  <div class="mini-main"><div class="mini-t">失败重试退回</div><div class="mini-d">2026-09-20 09:38 · 服务端超时</div></div>
+                  <span class="mini-r">+5 分</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="credit-card" style="margin-bottom:18px">
+              <div class="cc-k">积分余额</div>
+              <div class="cc-n">338<i>分</i></div>
+              <div class="cc-sub">约可生成 8 份简历 · 失败不扣</div>
+              <div class="cc-actions">
+                <button class="btn btn-primary btn-sm" id="rechargeBtn">充值</button>
+                <button class="btn btn-outline btn-sm" id="orderBtn">订单记录</button>
+              </div>
+            </div>
+
+            <div class="panel plan-mini">
+              <div class="pm-top">
+                <h4>会员</h4>
+                <span class="tag tag-accent" style="margin-left:auto;height:20px;font-size:9.5px">省 40%</span>
+              </div>
+              <div class="pm-price">¥19<span> / 月</span></div>
+              <div class="tiny">年付 ¥138，合 ¥11.5 / 月</div>
+              <ul class="pm-list">
+                <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg>无水印导出 · 全格式</li>
+                <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg>24 款模板全解锁</li>
+                <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg>AI 批注不限次 · 优先队列</li>
+              </ul>
+              <button class="btn btn-primary btn-block btn-sm" style="margin-top:14px" id="upgradeBtn">升级会员</button>
+              <p class="tiny" style="margin-top:9px;line-height:1.6">取消随时生效，剩余天数按比例退回积分。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/common.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>paperdemo · AI 学术写作工具（演示站）</title>
+<meta name="description" content="演示站：展示学术写作工具的产品界面与交互——从初稿、改写到排版。AIGC 检测为模拟演示，不代表第三方检测结论。">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F5F1E6'/%3E%3Crect x='6' y='4' width='20' height='24' fill='%23FBF9F2' stroke='%231C2B26' stroke-width='1.6'/%3E%3Cpath d='M10 11h12M10 16h12M10 21h7' stroke='%231F4A3D' stroke-width='1.6'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- ============================ NAV ============================ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="paperdemo 首页">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><rect x="6" y="4" width="20" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M11 11h10M11 16.5h10M11 22h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-name">paperdemo</span>
+        <span class="brand-sub">AI 学术写作工具 · 演示站</span>
+      </span>
+    </a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="#caps">能力</a>
+      <a href="#rewrite">改写演示</a>
+      <a href="#flow">流程</a>
+      <a href="#scenes">场景</a>
+      <a href="#faq">说明</a>
+    </nav>
+    <a class="btn btn-primary btn-sm nav-cta" href="#rewrite">看在线演示</a>
+    <button class="nav-toggle" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu" hidden>
+    <a href="#caps">能力</a>
+    <a href="#rewrite">改写演示</a>
+    <a href="#flow">流程</a>
+    <a href="#scenes">场景</a>
+    <a href="#faq">说明</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============================ HERO ============================ -->
+<section class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="eyebrow">PAPERDEMO · ACADEMIC WRITING STUDIO</p>
+      <h1>让文章表达，<br>更像<b class="hl">你自己</b>。</h1>
+      <p class="lede">从初稿、改写到排版，把文章里那些最耗时间的细节，交给一套更懂学术表达的工具。这是产品的演示站——界面、交互、文案，都是它真实的样子。</p>
+      <div class="hero-acts">
+        <a class="btn btn-primary" href="#rewrite">看改写演示</a>
+        <a class="btn btn-ghost" href="#caps">看全部能力</a>
+      </div>
+      <p class="hero-note">浏览无需登录 · 首页只负责让你快速找到下一步</p>
+    </div>
+
+    <!-- 手稿卡：可交互的改写演示 -->
+    <div class="msheet" id="msheet">
+      <div class="msheet-head">
+        <span class="msheet-tag">MANUSCRIPT</span>
+        <span class="msheet-title">降重演示 · 第 3 段</span>
+        <span class="msheet-clock" id="msClock">就绪</span>
+      </div>
+      <div class="msheet-body">
+        <div class="mblock m-origin">
+          <div class="mblock-label">原文</div>
+          <p id="mOrigin">随着社会的发展，这一问题越来越受到人们的关注和重视，本文对相关问题进行了研究。</p>
+          <div class="mnote mnote-l" data-note="1">句式机械 · 空泛连接</div>
+        </div>
+        <div class="marrow" aria-hidden="true">
+          <span class="marrow-line"></span>
+          <button class="mbtn" id="rewriteBtn" type="button">改写这一段</button>
+          <span class="marrow-line"></span>
+        </div>
+        <div class="mblock m-result" id="mResult">
+          <div class="mblock-label">改写后</div>
+          <p id="mResultText">近年来，这一问题持续受到关注，相关讨论明显增多；本文围绕其成因与应对展开分析。</p>
+          <div class="mnote mnote-r" data-note="2">语义保持 · 节奏更稳</div>
+        </div>
+        <div class="mgauge" id="mGauge" hidden>
+          <div class="mgauge-row">
+            <span class="mgauge-key">AIGC 疑似度</span>
+            <span class="mgauge-vals"><b id="gBefore">87%</b><i>→</i><b id="gAfter">12%</b></span>
+          </div>
+          <div class="mgauge-bars">
+            <div class="mgauge-bar"><span id="barBefore" style="width:87%"></span></div>
+            <div class="mgauge-bar mgauge-bar-ok"><span id="barAfter" style="width:12%"></span></div>
+          </div>
+          <p class="mgauge-foot">模拟演示数据 · 不代表第三方检测结论</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack">
+      <span>语义保持</span><span>·</span><span>句式调整</span><span>·</span><span>保留专业术语</span><span>·</span><span>可继续编辑</span><span>·</span><span>原文 / 改写对照</span><span>·</span><span>不替你制造统一口吻</span><span>·</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CAPS ============================ -->
+<section class="section" id="caps">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">01 / CORE CAPABILITIES</p>
+      <h2>文章最难改的地方，<br>先替你理顺</h2>
+      <p class="sec-lede">不追求把文字改得不像人，而是让表达更顺、逻辑更稳，也更方便你继续编辑。每项能力都有独立的工作页。</p>
+    </div>
+    <div class="caps-grid">
+      <article class="cap">
+        <span class="cap-idx">01</span>
+        <h3>生成文章</h3>
+        <p>从题目、提纲到可继续修改的初稿，先搭起结构再填内容。</p>
+        <div class="cap-tags"><span>初稿</span><span>结构</span></div>
+      </article>
+      <article class="cap">
+        <span class="cap-idx">02</span>
+        <h3>文章查重</h3>
+        <p>提交文章，查看总相似度和片段级修改建议，逐段定位。</p>
+        <div class="cap-tags"><span>相似度</span><span>片段建议</span></div>
+      </article>
+      <article class="cap">
+        <span class="cap-idx">03</span>
+        <h3>智能降重</h3>
+        <p>保持核心含义，重新组织句式和段落，让重复表达变成自然表达。</p>
+        <div class="cap-tags"><span>语义保持</span><span>句式调整</span></div>
+      </article>
+      <article class="cap">
+        <span class="cap-idx">04</span>
+        <h3>降低 AIGC</h3>
+        <p>减少机械的节奏和模板化连接，让写作痕迹更自然，术语依然准确。</p>
+        <div class="cap-tags"><span>去机械感</span><span>保术语</span></div>
+      </article>
+      <article class="cap">
+        <span class="cap-idx">05</span>
+        <h3>AIGC 检测</h3>
+        <p>查看模拟分析，了解疑似度分布。演示结论，不代表第三方报告。</p>
+        <div class="cap-tags"><span class="t-warn">模拟演示</span></div>
+      </article>
+      <article class="cap">
+        <span class="cap-idx">06</span>
+        <h3>文章排版</h3>
+        <p>统一标题、正文和参考文献格式，交稿前把版式细节收干净。</p>
+        <div class="cap-tags"><span>.docx</span><span>格式统一</span></div>
+      </article>
+      <article class="cap">
+        <span class="cap-idx">07</span>
+        <h3>开题报告</h3>
+        <p>智能生成结构完整的开题报告，研究背景、思路、方法各就各位。</p>
+        <div class="cap-tags"><span>结构完整</span></div>
+      </article>
+      <article class="cap">
+        <span class="cap-idx">08</span>
+        <h3>文献综述</h3>
+        <p>智能梳理研究脉络，按主题归类观点，自动标注引用位置。</p>
+        <div class="cap-tags"><span>脉络梳理</span><span>引用标注</span></div>
+      </article>
+      <article class="cap">
+        <span class="cap-idx">09</span>
+        <h3>任务书</h3>
+        <p>一键生成规范的毕业设计任务书，要求、进度、成果写清楚。</p>
+        <div class="cap-tags"><span>规范模板</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ REWRITE DEMO ============================ -->
+<section class="section section-dark" id="rewrite">
+  <div class="wrap">
+    <div class="sec-head sec-head-dark">
+      <p class="eyebrow">02 / SEE IT WORK</p>
+      <h2>不是换几个词，<br>是把话说顺</h2>
+      <p class="sec-lede">从句子关系到段落节奏，改写后的文本更适合继续思考和编辑。点下面的按钮，看一段真实的改写对照。</p>
+    </div>
+    <div class="demo-panel">
+      <div class="demo-col">
+        <div class="demo-col-head"><span class="dot dot-mute"></span>改写前 · 机械、重复、断裂</div>
+        <p class="demo-text" id="demoBefore">本文对相关问题进行了研究，研究结果表明，相关方法具有一定的有效性，并且能够在一定程度上提升整体效果。</p>
+        <ul class="demo-marks">
+          <li>「进行了研究」无信息量</li>
+          <li>「一定的」削弱结论</li>
+          <li>长句一逗到底，没有停顿</li>
+        </ul>
+      </div>
+      <div class="demo-mid">
+        <button class="btn btn-amber" id="demoBtn" type="button">执行改写</button>
+        <span class="demo-mid-hint">纯前端演示动画</span>
+      </div>
+      <div class="demo-col demo-col-after">
+        <div class="demo-col-head"><span class="dot dot-ok"></span>改写后 · 自然、清楚、可继续编辑</div>
+        <p class="demo-text" id="demoAfter">研究结果显示，该方法能够有效改善整体表现，也为后续优化提供了清晰的方向。</p>
+        <ul class="demo-marks demo-marks-ok">
+          <li>结论前置，一句话说清</li>
+          <li>去掉模糊限定词</li>
+          <li>断句后留出编辑空间</li>
+        </ul>
+      </div>
+    </div>
+    <p class="demo-foot">演示文案取自产品首页示例 · 实际输出由模型生成，每次结果都留给你判断、调整和完善的空间</p>
+  </div>
+</section>
+
+<!-- ============================ FLOW ============================ -->
+<section class="section" id="flow">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebron">03 / HOW IT WORKS</p>
+      <h2>四步回到你的写作</h2>
+    </div>
+    <ol class="flow">
+      <li class="flow-step">
+        <span class="flow-num">1</span>
+        <h3>输入内容</h3>
+        <p>粘贴段落，或从文章题目开始。支持上传 .docx 与 .txt。</p>
+      </li>
+      <li class="flow-step">
+        <span class="flow-num">2</span>
+        <h3>选择能力</h3>
+        <p>降重、降低 AIGC、生成或排版——要哪一项就点哪一项。</p>
+      </li>
+      <li class="flow-step">
+        <span class="flow-num">3</span>
+        <h3>生成 / 改写</h3>
+        <p>得到结构清晰、可编辑的结果，原文与改写随时对照。</p>
+      </li>
+      <li class="flow-step">
+        <span class="flow-num">4</span>
+        <h3>检查并继续</h3>
+        <p>保留判断，把最后一笔交给你。结果不是终点。</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================ SCENES ============================ -->
+<section class="section section-tint" id="scenes">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">04 / MADE FOR REAL DEADLINES</p>
+      <h2>你正在写的，<br>都可以从这里开始</h2>
+      <p class="sec-lede">从第一次落笔，到提交前的最后检查，每一个阶段都有合适的入口。</p>
+    </div>
+    <div class="scenes">
+      <div class="scene">
+        <span class="scene-idx">题目</span>
+        <div><h3>毕业文章初稿</h3><p>从题目和提纲搭起第一版结构</p></div>
+      </div>
+      <div class="scene">
+        <span class="scene-idx">大纲</span>
+        <div><h3>课程文章润色</h3><p>让段落更紧凑、表达更顺</p></div>
+      </div>
+      <div class="scene">
+        <span class="scene-idx">初稿</span>
+        <div><h3>AI 痕迹调整</h3><p>把机械感降下来，保留你的判断</p></div>
+      </div>
+      <div class="scene">
+        <span class="scene-idx">定稿</span>
+        <div><h3>格式整理</h3><p>交稿前统一版式细节，标题正文参考文献</p></div>
+      </div>
+      <div class="scene scene-wide">
+        <span class="scene-idx">开题</span>
+        <div><h3>开题、任务书一稿通</h3><p>开题报告与毕业设计任务书，结构规范一次到位</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FAQ ============================ -->
+<section class="section" id="faq">
+  <div class="wrap wrap-narrow">
+    <div class="sec-head">
+      <p class="eyebrow">05 / QUESTIONS, ANSWERED</p>
+      <h2>开始之前，先把你在意的事说清楚</h2>
+    </div>
+    <div class="faq" id="faqList">
+      <details class="faq-item">
+        <summary>是否需要登录？</summary>
+        <p>浏览首页不需要登录。打开生成文章、降重、检测、排版等功能页需要先登录，登录后会自动回到你原本打开的页面。</p>
+      </details>
+      <details class="faq-item">
+        <summary>文章查重接入了第三方数据库吗？</summary>
+        <p>当前文章查重基于自有文本库和相似度算法生成，结果用于写作修改参考；知网、维普、万方等授权接口会在具备合规接入条件后再开放。</p>
+      </details>
+      <details class="faq-item">
+        <summary>AIGC 检测是真实检测吗？</summary>
+        <p>首页和检测页展示的是模拟分析演示，不代表知网、维普、万方或其他第三方平台的真实检测报告。</p>
+      </details>
+      <details class="faq-item">
+        <summary>支持上传文件吗？</summary>
+        <p>降重和降低 AIGC 支持上传 <code>.docx</code> 与 <code>.txt</code> 文件，文章排版支持上传 <code>.docx</code> 文档。</p>
+      </details>
+      <details class="faq-item">
+        <summary>输出结果我能继续改吗？</summary>
+        <p>能。每次输出都是可编辑文本，不是终点——判断、调整和完善的空间始终留给你。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CTA ============================ -->
+<section class="cta">
+  <div class="wrap cta-in">
+    <p class="eyebrow eyebrow-dark">YOUR NEXT PARAGRAPH</p>
+    <h2>从下一句话开始，<br>把文章写成你的。</h2>
+    <div class="hero-acts cta-acts">
+      <a class="btn btn-amber" href="#rewrite">回到改写演示</a>
+      <a class="btn btn-line" href="#caps">看看九项能力</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="footer">
+  <div class="wrap footer-in">
+    <div class="footer-brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><rect x="6" y="4" width="20" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M11 11h10M11 16.5h10M11 22h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </span>
+      <span>paperdemo</span>
+    </div>
+    <p class="footer-note">本站为产品演示站，用于展示界面与交互，不提供真实服务。AIGC 检测为模拟演示，不代表第三方检测结论。</p>
+    <p class="footer-meta">PAPERDEMO · DEMO BUILD · 2026</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

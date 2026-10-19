@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>表单自动回复 · 工作流运行演示</title>
+<meta name="description" content="表单自动回复工作流的真实运行演示：客户提交、清洗入库、AI 生成回复、分钟级发送，节点流程、执行日志、回复邮件全程可见。演示数据为模拟。">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230B0F14'/%3E%3Cpath d='M18 4 8 18h6l-1.5 10L23 13h-6.5L18 4z' fill='%23F0A93B'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#11161F"/><path d="M18 4 8 18h6l-1.5 10L23 13h-6.5L18 4z" fill="#F0A93B"/></svg>
+      </span>
+      <span class="brand-text"><b>自动档</b><i>WORKFLOW DEMO</i></span>
+    </a>
+    <span class="status-pill"><span class="sp-dot"></span>演示环境 · 数据为模拟</span>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+
+<section class="demo" id="demo2">
+  <div class="demo-head">
+    <div class="dh-meta">
+      <span class="dh-no">DEMO 02</span>
+      <span class="dh-slash">/</span>
+      <span class="dh-en">AUTO&nbsp;REPLY</span>
+    </div>
+    <h1>表单自动回复</h1>
+    <p>客户半夜在官网留了咨询。以前等早上人工回复，客户已经找了别家；现在分钟级回复，同时通知你跟进。</p>
+  </div>
+
+  <div class="pipeline" id="pipe2">
+    <div class="node" data-step="1">
+      <span class="n-port n-port-l"></span>
+      <span class="n-ic"><svg viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="17" rx="1.8"/><path d="M8.5 9h7M8.5 13h7M8.5 17h4"/></svg></span>
+      <span class="n-body"><b>表单提交</b><i>webhook 实时触发</i></span>
+      <span class="n-read" data-read="1">待命</span>
+      <span class="n-port n-port-r"></span>
+    </div>
+    <span class="wire"><span class="wire-dot"></span></span>
+    <div class="node" data-step="2">
+      <span class="n-port n-port-l"></span>
+      <span class="n-ic"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.5" ry="2.8"/><path d="M4.5 6v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V6"/><path d="M4.5 12v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/></svg></span>
+      <span class="n-body"><b>清洗入库</b><i>脱敏 · 补全字段</i></span>
+      <span class="n-read" data-read="2">待命</span>
+      <span class="n-port n-port-r"></span>
+    </div>
+    <span class="wire"><span class="wire-dot"></span></span>
+    <div class="node" data-step="3">
+      <span class="n-port n-port-l"></span>
+      <span class="n-ic"><svg viewBox="0 0 24 24"><path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9L12 3.5z"/><path d="M18.5 16.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/></svg></span>
+      <span class="n-body"><b>AI 生成回复</b><i>引用报价单 · 可审核</i></span>
+      <span class="n-read" data-read="3">待命</span>
+      <span class="n-port n-port-r"></span>
+    </div>
+    <span class="wire"><span class="wire-dot"></span></span>
+    <div class="node" data-step="4">
+      <span class="n-port n-port-l"></span>
+      <span class="n-ic"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="1.8"/><path d="M3.8 7l8.2 6 8.2-6"/></svg></span>
+      <span class="n-body"><b>发送客户</b><i>邮件 + 企微通知你</i></span>
+      <span class="n-read" data-read="4">待命</span>
+      <span class="n-port n-port-r"></span>
+    </div>
+  </div>
+
+  <div class="demo-grid">
+    <!-- 左：线索表单 -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="ph-t">客户提交 · 官网咨询表单</span>
+        <span class="ph-m" id="formClock">等待提交</span>
+      </div>
+      <div class="leadform" id="leadForm">
+        <div class="lf-row"><span class="lf-k">姓名</span><span class="lf-v" id="fName">—</span></div>
+        <div class="lf-row"><span class="lf-k">电话</span><span class="lf-v mono" id="fPhone">—</span></div>
+        <div class="lf-row lf-row-col"><span class="lf-k">咨询内容</span><span class="lf-v" id="fMsg">—</span></div>
+        <div class="lf-row"><span class="lf-k">提交时间</span><span class="lf-v mono" id="fTime">—</span></div>
+      </div>
+    </div>
+
+    <!-- 右：回复邮件 -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="ph-t">自动回复 · 客户收到的邮件</span>
+        <span class="ph-m" id="replyClock">未发送</span>
+      </div>
+      <div class="mail" id="mailCard" style="display:none">
+        <div class="mail-head">
+          <div class="mh-row"><span class="mh-k">主题</span><span class="mh-v">Re: 关于便携榨汁杯批发的报价咨询</span></div>
+          <div class="mh-row"><span class="mh-k">发件人</span><span class="mh-v mono">auto-reply@your-shop.cn</span></div>
+          <div class="mh-row"><span class="mh-k">收件人</span><span class="mh-v mono" id="mailTo">—</span></div>
+        </div>
+        <div class="mail-body" id="mailBody"></div>
+        <div class="mail-foot">客户 3 分钟内收到 · 同时企微通知你跟进</div>
+      </div>
+      <div class="result-empty" id="empty2">
+        <svg viewBox="0 0 24 24" class="re-ic"><rect x="3" y="5.5" width="18" height="13" rx="1.8"/><path d="M3.8 7l8.2 6 8.2-6"/></svg>
+        <p>运行后，回复邮件会出现在这里</p>
+      </div>
+      <div class="speedup" id="speedup" style="display:none">
+        <div class="sp-item"><b class="mono">4 小时</b><i>人工回复平均等待</i></div>
+        <span class="sp-arrow">→</span>
+        <div class="sp-item sp-ok"><b class="mono" id="spAuto">3 分钟</b><i>这套流程</i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="console" id="console2">
+    <div class="console-bar">
+      <span class="cb-lights"><i></i><i></i><i></i></span>
+      <span class="console-title">执行日志 · run_lead_auto_reply</span>
+      <span class="console-state" id="cstate2">IDLE</span>
+    </div>
+    <div class="console-body" id="clog2">
+      <div class="log-line log-dim">等待运行 · 点击下方按钮或滚动到此处自动执行</div>
+    </div>
+  </div>
+
+  <div class="demo-bar">
+    <button class="runbtn" id="runBtn2" type="button">
+      <svg viewBox="0 0 24 24" class="rb-ic"><path d="M7 4.8v14.4c0 .8.9 1.3 1.6.9l11.2-7.2c.6-.4.6-1.4 0-1.8L8.6 3.9c-.7-.4-1.6.1-1.6.9z"/></svg>
+      模拟一条新提交
+    </button>
+    <span class="runnote">纯前端演示 · 不连接真实表单</span>
+  </div>
+
+  <div class="crosslink">
+    <a href="demo1.html">← 另一个 demo · 竞品价格监控日报</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p><b>关于这个演示</b>——页面是真的，数据是模拟的。接入你的真实数据源、表单或群机器人后，跑的是同一条流程：触发、抓取、清洗、AI 处理、推送，每一步都按你的业务改。</p>
+    <p class="foot-meta">AUTODEMO · 工作流运行演示 · 定制与询价看商品描述</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

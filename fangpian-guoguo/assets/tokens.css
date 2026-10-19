@@ -1,0 +1,416 @@
+/* ==========================================================================
+   方片蝈蝈 · R 设计语言
+   tokens.css —— 颜色 / 字阶 / 间距 / 基础组件（按钮、标签、卡片、开关）
+   亮色为默认，[data-theme="dark"] 切换 R 暗色 token。
+   ========================================================================== */
+
+:root{
+  /* ---- 面 ---- */
+  --paper:        #FAFAF7;   /* 页面底 */
+  --sunken:       #F3F1EB;   /* 分区底 / 侧栏 / 中性 chip */
+  --card:         #FFFFFF;   /* 卡片 */
+  --card-hover:   #FFFEFB;
+
+  /* ---- 线 ---- */
+  --line:         #E7E4DC;
+  --line-strong:  #D8D4C7;
+
+  /* ---- 墨 ---- */
+  --ink:          #17140F;   /* 标题 / 暗底 / 主按钮 */
+  --ink-2:        #4A463E;   /* 正文内层 */
+  --body:         #6B675F;   /* 正文 */
+  --muted:        #98948B;   /* 弱文字 */
+  --dim:          #B9B5AA;   /* 灰条 / 占位 */
+  --track:        #EDEAE3;   /* 8px 细条底 */
+
+  /* ---- 强调 ---- */
+  --accent:       #E9F559;   /* 荧光黄：只做标记 / 暗底行动色 */
+  --accent-dim:   #F3F9B8;
+  --red:          #D8332A;   /* 红笔 */
+  --red-ink:      #C22A22;   /* 红笔小字（亮色下压深一档） */
+  --red-soft:     #F7D2CC;   /* 缺失底 */
+
+  /* ---- 暗底上的专用 ---- */
+  --on-ink-muted: #B9B5AA;
+
+  /* ---- 阴影 ---- */
+  --sh-card:  0 10px 26px rgba(23,20,15,.08);
+  --sh-hero:  0 16px 38px rgba(23,20,15,.13);
+  --sh-float: 0 22px 46px -16px rgba(23,20,15,.35);
+
+  /* ---- 圆角 ---- */
+  --r-chip: 8px;
+  --r-card: 16px;
+  --r-lg:   20px;
+  --r-pill: 999px;
+
+  /* ---- 字体 ---- */
+  --font: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+          -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+
+  /* ---- 动效 ---- */
+  --ease: cubic-bezier(.2,0,0,1);
+  --quick: 120ms;
+  --base: 240ms;
+  --slow: 600ms;
+
+  /* ---- 布局 ---- */
+  --max: 1240px;
+  --nav-h: 68px;
+}
+
+[data-theme="dark"]{
+  --paper:        #17140F;
+  --sunken:       #1D1913;
+  --card:         #221E17;
+  --card-hover:   #272219;
+
+  --line:         #332E25;
+  --line-strong:  #433C31;
+
+  --ink:          #F2EFE7;
+  --ink-2:        #D9D3C6;
+  --body:         #A69F92;
+  --muted:        #8C8578;
+  --dim:          #4A443A;
+  --track:        #332E25;
+
+  --accent:       #E9F559;
+  --accent-dim:   #2E2B16;
+  --red:          #D8332A;
+  --red-ink:      #F0756A;
+  --red-soft:     #3A2228;
+
+  --on-ink-muted: #B9B5AA;
+
+  --sh-card:  0 10px 26px rgba(0,0,0,.28);
+  --sh-hero:  0 16px 38px rgba(0,0,0,.42);
+  --sh-float: 0 22px 46px -16px rgba(0,0,0,.6);
+}
+
+/* ==========================================================================
+   Reset
+   ========================================================================== */
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+body{
+  font-family:var(--font);
+  background:var(--paper);
+  color:var(--ink);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+img,svg{ display:block; max-width:100%; }
+button,input,textarea,select{ font:inherit; color:inherit; }
+button{ background:none; border:0; cursor:pointer; }
+a{ color:inherit; text-decoration:none; }
+ul,ol{ list-style:none; }
+::selection{ background:var(--accent); color:#17140F; }
+
+/* 滚动条 */
+*{ scrollbar-width:thin; scrollbar-color:var(--dim) transparent; }
+*::-webkit-scrollbar{ width:9px; height:9px; }
+*::-webkit-scrollbar-thumb{ background:var(--dim); border-radius:99px; border:3px solid transparent; background-clip:content-box; }
+*::-webkit-scrollbar-track{ background:transparent; }
+
+/* ==========================================================================
+   排版
+   ========================================================================== */
+.h-display{
+  font-size:clamp(38px,5.1vw,66px);
+  line-height:1.1;
+  letter-spacing:-.045em;
+  font-weight:800;
+}
+.h1{ font-size:clamp(30px,3.4vw,44px); line-height:1.16; letter-spacing:-.035em; font-weight:800; }
+.h2{ font-size:clamp(24px,2.4vw,32px); line-height:1.22; letter-spacing:-.03em; font-weight:750; }
+.h3{ font-size:19px; line-height:1.35; letter-spacing:-.018em; font-weight:700; }
+.lede{ font-size:16.5px; line-height:1.78; color:var(--body); }
+.small{ font-size:13px; color:var(--body); }
+.tiny{ font-size:11.5px; color:var(--muted); }
+
+.kicker{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.num{ font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1; }
+
+/* 荧光笔标记（只用 scaleX 伪元素，不触发重绘） */
+.mark{
+  position:relative;
+  z-index:0;
+  white-space:nowrap;
+}
+.mark::before{
+  content:"";
+  position:absolute;
+  left:-3px; right:-3px; bottom:6%;
+  height:36%;
+  background:var(--accent);
+  z-index:-1;
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .55s var(--ease);
+}
+.mark.on::before,
+.rv.on .mark::before,
+.no-anim .mark::before{ transform:scaleX(1); }
+.mark-red::before{ background:var(--red-soft); }
+
+/* 暗色下「荧光笔」变成整块高亮 + 墨字：浅色字压在黄条上对比度不够 */
+[data-theme="dark"] .mark::before{ height:84%; bottom:8%; border-radius:2px; }
+[data-theme="dark"] .mark{ color:#17140F; }
+
+/* ==========================================================================
+   按钮
+   ========================================================================== */
+.btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  height:44px;
+  padding:0 22px;
+  border-radius:var(--r-pill);
+  font-size:14px;
+  font-weight:650;
+  letter-spacing:-.01em;
+  white-space:nowrap;
+  transition:transform var(--quick) var(--ease),
+             background var(--quick) var(--ease),
+             border-color var(--quick) var(--ease),
+             box-shadow var(--quick) var(--ease),
+             color var(--quick) var(--ease);
+}
+.btn:active{ transform:scale(.975); }
+
+.btn-primary{
+  background:var(--ink);
+  color:var(--paper);
+  overflow:hidden;
+  box-shadow:0 10px 22px -12px rgba(23,20,15,.7);
+}
+[data-theme="dark"] .btn-primary{ color:#17140F; background:var(--accent); box-shadow:none; }
+.btn-primary::after{
+  content:"";
+  position:absolute; top:0; bottom:0; left:-90px; width:52px;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.34),transparent);
+  transform:skewX(-18deg);
+  transition:transform .55s ease;
+  pointer-events:none;
+}
+.btn-primary:hover{ transform:translateY(-1px); box-shadow:0 16px 30px -14px rgba(23,20,15,.75); }
+.btn-primary:hover::after{ transform:skewX(-18deg) translateX(320px); }
+
+.btn-outline{
+  border:1px solid var(--line-strong);
+  color:var(--ink);
+  background:transparent;
+}
+.btn-outline:hover{ background:var(--sunken); border-color:var(--dim); }
+
+.btn-ghost{ color:var(--body); padding:0 14px; height:38px; }
+.btn-ghost:hover{ color:var(--ink); background:var(--sunken); }
+
+.btn-accent{ background:var(--accent); color:#17140F; }
+.btn-accent:hover{ transform:translateY(-1px); box-shadow:0 12px 24px -14px rgba(23,20,15,.5); }
+
+.btn-sm{ height:36px; padding:0 15px; font-size:13px; }
+.btn-lg{ height:52px; padding:0 30px; font-size:15px; }
+.btn-block{ width:100%; }
+.btn[disabled]{ opacity:.45; pointer-events:none; }
+
+.link-arrow{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:13.5px; font-weight:600; color:var(--ink);
+  border-bottom:1px solid transparent;
+  transition:border-color var(--quick) var(--ease), gap var(--quick) var(--ease);
+}
+.link-arrow:hover{ border-color:var(--ink); gap:9px; }
+
+/* ==========================================================================
+   标签 / 药丸
+   ========================================================================== */
+.tag{
+  display:inline-flex; align-items:center; gap:6px;
+  height:24px; padding:0 9px;
+  border-radius:6px;
+  background:var(--sunken);
+  color:var(--body);
+  font-size:11.5px; font-weight:600;
+  letter-spacing:.01em;
+  white-space:nowrap;
+}
+.tag-accent{ background:var(--accent); color:#17140F; }
+.tag-red{ background:var(--red-soft); color:var(--red-ink); }
+[data-theme="dark"] .tag-red{ color:#F7B4AC; }
+.tag-outline{ background:transparent; border:1px solid var(--line); color:var(--muted); }
+.tag-ink{ background:var(--ink); color:var(--paper); }
+[data-theme="dark"] .tag-ink{ color:#17140F; }
+
+.pill{
+  display:inline-flex; align-items:center; gap:6px;
+  height:28px; padding:0 12px;
+  border-radius:var(--r-pill);
+  font-size:12px; font-weight:600;
+  background:var(--sunken); color:var(--body);
+  white-space:nowrap;
+}
+.pill-accent{ background:var(--accent); color:#17140F; }
+.pill-ink{ background:var(--ink); color:var(--paper); }
+[data-theme="dark"] .pill-ink{ color:#17140F; }
+.pill-line{ background:transparent; border:1px solid var(--line); color:var(--muted); }
+
+.dot{
+  width:6px; height:6px; border-radius:50%;
+  background:currentColor; flex:none;
+}
+
+/* ==========================================================================
+   卡片
+   ========================================================================== */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--r-card);
+  box-shadow:var(--sh-card);
+}
+.card-flat{ box-shadow:none; }
+.card-pad{ padding:22px; }
+
+.divider{ height:1px; background:var(--line); border:0; }
+
+/* ==========================================================================
+   进度条
+   ========================================================================== */
+.bar{
+  height:8px;
+  border-radius:99px;
+  background:var(--track);
+  overflow:hidden;
+}
+.bar > i{
+  display:block;
+  height:100%;
+  border-radius:99px;
+  background:var(--ink);
+  transform-origin:left;
+  transform:scaleX(0);
+  transition:transform 1s var(--ease);
+}
+[data-theme="dark"] .bar > i{ background:var(--accent); }
+.bar.on > i{ transform:scaleX(var(--v, .5)); }
+.bar-static > i{ transform:scaleX(var(--v, .5)); transition:none; }
+
+/* ==========================================================================
+   开关
+   ========================================================================== */
+.switch{
+  position:relative;
+  width:38px; height:22px;
+  border-radius:99px;
+  background:var(--dim);
+  transition:background var(--base) var(--ease);
+  flex:none;
+}
+.switch::after{
+  content:"";
+  position:absolute; top:3px; left:3px;
+  width:16px; height:16px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.18);
+  transition:transform var(--base) var(--ease);
+}
+.switch[aria-checked="true"]{ background:var(--ink); }
+[data-theme="dark"] .switch[aria-checked="true"]{ background:var(--accent); }
+.switch[aria-checked="true"]::after{ transform:translateX(16px); }
+
+/* ==========================================================================
+   表单
+   ========================================================================== */
+.field{
+  width:100%;
+  height:42px;
+  padding:0 13px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  font-size:13.5px;
+  color:var(--ink);
+  outline:none;
+  transition:border-color var(--quick) var(--ease), box-shadow var(--quick) var(--ease);
+}
+.field::placeholder{ color:var(--muted); }
+.field:focus{
+  border-color:var(--ink);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--ink) 8%, transparent);
+}
+textarea.field{ height:auto; padding:12px 13px; line-height:1.75; resize:vertical; }
+
+/* ==========================================================================
+   入场 / 显现
+   ========================================================================== */
+@keyframes riseIn{ from{opacity:0; transform:translateY(26px)} to{opacity:1; transform:none} }
+@keyframes finIn{ from{opacity:0; transform:translateY(18px) scale(.96)} to{opacity:1; transform:none} }
+@keyframes paperIn{ from{opacity:0; transform:translateX(90px) rotate(3.5deg)} to{opacity:1; transform:none} }
+@keyframes hlSweep{ from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+@keyframes popIn{ from{opacity:0; transform:translateX(14px)} to{opacity:1; transform:none} }
+@keyframes floatY{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+@keyframes sway{ 0%,100%{transform:rotate(3.2deg)} 50%{transform:rotate(2.1deg) translateY(-4px)} }
+@keyframes kenburns{ 0%{transform:scale(1.16)} 14%{transform:scale(1.065)} 55%{transform:scale(1.09)} 100%{transform:scale(1.065)} }
+@keyframes ringSpin{ to{transform:rotate(360deg)} }
+@keyframes tkMove{ to{transform:translateX(-50%)} }
+@keyframes pulseLine{ 0%{opacity:1} 50%{opacity:.45} 100%{opacity:1} }
+
+.rv{
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .6s var(--ease), transform .6s var(--ease);
+}
+.rv.on{ opacity:1; transform:none; }
+.rv-d1{ transition-delay:.06s; }
+.rv-d2{ transition-delay:.12s; }
+.rv-d3{ transition-delay:.18s; }
+.rv-d4{ transition-delay:.24s; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation:none !important; transition:none !important; }
+  .rv{ opacity:1; transform:none; }
+  .mark::before,
+  .hero h1 .hl::before{ transform:scaleX(1); }
+  html{ scroll-behavior:auto; }
+}
+.no-anim .rv{ opacity:1; transform:none; }
+
+/* ==========================================================================
+   工具
+   ========================================================================== */
+.wrap{ width:100%; max-width:var(--max); margin:0 auto; padding:0 32px; }
+.row{ display:flex; align-items:center; gap:10px; }
+.row-between{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.col{ display:flex; flex-direction:column; }
+.grow{ flex:1; }
+.hr{ height:1px; background:var(--line); width:100%; }
+.mono{ font-family:var(--mono); }
+.muted{ color:var(--muted); }
+.body-c{ color:var(--body); }
+.ink{ color:var(--ink); }
+.red{ color:var(--red-ink); }
+.accent{ color:var(--accent); }
+.center{ text-align:center; }
+.nowrap{ white-space:nowrap; }
+.sr-only{
+  position:absolute; width:1px; height:1px; overflow:hidden;
+  clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+}

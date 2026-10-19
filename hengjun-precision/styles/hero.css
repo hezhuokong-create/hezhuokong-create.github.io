@@ -1,0 +1,391 @@
+/* ============================================================
+   首屏 v2 · 检测台
+   改版意图（2026-10-17）：v1 太"轻"——细线、居中留白、字号不够,
+   看着像模板。v2 换成三坐标测量机的观感：
+   巨型字号压屏 + 设备局部溢出视口 + 实时读数层 + 扫描光带。
+   ============================================================ */
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: var(--header-h);
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  isolation: isolate;
+  background:
+    radial-gradient(88% 66% at 84% 20%, rgba(232, 86, 42, 0.17), transparent 60%),
+    radial-gradient(70% 60% at 4% 98%, rgba(64, 104, 84, 0.14), transparent 72%);
+}
+
+/* 细网格（26px）+ 主网格（130px）双层，中心径向渐隐 */
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(236, 232, 223, 0.042) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 232, 223, 0.042) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(105% 88% at 52% 38%, #000 28%, transparent 92%);
+  mask-image: radial-gradient(105% 88% at 52% 38%, #000 28%, transparent 92%);
+}
+.hero::after {
+  background-image:
+    linear-gradient(rgba(236, 232, 223, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 232, 223, 0.055) 1px, transparent 1px);
+  background-size: 130px 130px;
+}
+
+/* ---------------- 顶部系统条 ---------------- */
+.hero__sys {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  padding: 10px max(var(--gutter), calc((100vw - var(--page-max)) / 2 + var(--gutter)));
+  border-bottom: 1px solid var(--line);
+  background: rgba(14, 17, 15, 0.5);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.hero__sys b {
+  color: var(--text);
+  font-weight: 500;
+}
+.hero__sys .sys-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+/* 运行指示：功能性状态色（绿=正常），不属于品牌色 */
+.sys-led {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: #6ee7a8;
+  box-shadow: 0 0 10px rgba(110, 231, 168, 0.8);
+  animation: led-blink 2.6s ease-in-out infinite;
+}
+@keyframes led-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ---------------- 主体 ---------------- */
+.hero__body {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr);
+  align-items: center;
+  padding-left: max(var(--gutter), calc((100vw - var(--page-max)) / 2 + var(--gutter)));
+  min-height: 0;
+}
+
+.hero__copy {
+  position: relative;
+  z-index: 3;
+  padding: clamp(20px, 3vw, 48px) 0 clamp(18px, 2.6vw, 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+
+/* 巨型标题：整屏最重的一笔 */
+.hero__title {
+  font-family: var(--f-sans);
+  font-weight: 900;
+  font-size: clamp(42px, 6.8vw, 104px);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  margin: var(--sp-2) 0 var(--sp-2);
+  text-wrap: balance;
+}
+.hero__title em {
+  font-style: normal;
+  color: var(--accent);
+  position: relative;
+  display: inline-block;
+}
+/* 强调词下方一道实心橙条，要比文字稍宽一点才有"印刷重压"感 */
+.hero__title em::after {
+  content: "";
+  position: absolute;
+  left: -0.04em;
+  right: -0.04em;
+  bottom: 0.06em;
+  height: 0.1em;
+  background: var(--accent);
+  opacity: 0.22;
+}
+
+.hero__lead {
+  max-width: 24em;
+  color: var(--muted);
+  font-size: var(--fs-md);
+  line-height: 1.8;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+}
+
+/* 左下角：验收戳 */
+.hero__stamp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--line);
+  width: min(100%, 420px);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.hero__stamp svg { color: var(--accent); flex: none; }
+
+/* ---------------- 右侧：设备局部（溢出视口）---------------- */
+.hero__stage {
+  position: absolute;
+  top: 50%;
+  right: -13vw;
+  width: min(82vw, 940px);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+.hero__stage .gear {
+  width: 100%;
+  height: 100%;
+  color: rgba(236, 232, 223, 0.17);
+}
+.hero__stage .gear .accent-stroke { stroke: var(--accent); }
+.hero__stage .gear .accent-faint { stroke: rgba(232, 86, 42, 0.4); }
+
+/* 齿轮组内的旋转（v1 已有，改成更慢、更有"惯性"） */
+.gear__rotor {
+  transform-origin: 200px 200px;
+  animation: gear-spin 96s linear infinite;
+}
+.gear__rotor--rev {
+  transform-origin: 200px 200px;
+  animation: gear-spin 68s linear infinite reverse;
+}
+@keyframes gear-spin {
+  to { transform: rotate(360deg); }
+}
+.gear__pulse {
+  transform-origin: 200px 200px;
+  animation: gear-pulse 4.2s ease-in-out infinite;
+}
+@keyframes gear-pulse {
+  0%, 100% { opacity: 0.22; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.012); }
+}
+
+/* 扫描光带：一条横向橙光自上而下扫过设备 */
+.hero__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(232, 86, 42, 0.06) 34%,
+    rgba(232, 86, 42, 0.22) 49%,
+    rgba(255, 190, 160, 0.34) 50%,
+    rgba(232, 86, 42, 0.22) 51%,
+    rgba(232, 86, 42, 0.06) 66%,
+    transparent 100%
+  );
+  animation: hero-scan 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes hero-scan {
+  0% { transform: translateY(-140%); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(560%); opacity: 0; }
+}
+
+/* 读数浮层：挂在 hero__body 上，不能挂在溢出的设备图上，
+   否则 right 百分比会跟着溢出量跑出视口（实测踩过） */
+.readout {
+  position: absolute;
+  z-index: 4;
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 7px 11px;
+  border: 1px solid var(--line-2);
+  background: rgba(14, 17, 15, 0.78);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.readout b {
+  color: var(--accent);
+  font-weight: 500;
+}
+.readout::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  width: 6px;
+  height: 6px;
+  border-left: 1px solid var(--accent);
+  border-top: 1px solid var(--accent);
+}
+.readout--tl { top: 11%; right: 41%; }
+.readout--tr { top: 19%; right: 3%; }
+.readout--bl { bottom: 26%; right: 45%; }
+.readout--br { bottom: 16%; right: 5%; }
+.readout__bar {
+  display: block;
+  width: 52px;
+  height: 1px;
+  margin-top: 6px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.readout__spark {
+  display: block;
+  width: 58px;
+  height: 12px;
+  margin-top: 5px;
+  opacity: 0.8;
+}
+
+/* 四角括弧 */
+.brackets {
+  position: absolute;
+  inset: 4%;
+  pointer-events: none;
+}
+.brackets span {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--line-2);
+}
+.brackets span:nth-child(1) { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.brackets span:nth-child(2) { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.brackets span:nth-child(3) { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.brackets span:nth-child(4) { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+/* ---------------- 底部指标带 ---------------- */
+.hero__foot {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  background: rgba(14, 17, 15, 0.66);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.hero__foot .stat {
+  position: relative;
+  padding: 18px clamp(16px, 2.2vw, 30px) 20px;
+  border-right: 1px solid var(--line);
+}
+.hero__foot .stat:last-child { border-right: 0; }
+.hero__foot .stat:first-child {
+  padding-left: max(var(--gutter), calc((100vw - var(--page-max)) / 2 + var(--gutter)));
+}
+.hero__foot .stat__value { font-size: clamp(26px, 3vw, 44px); }
+.hero__foot .stat__label {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 9.5px;
+}
+
+/* 底边刻度尺 */
+.hero__ruler {
+  position: relative;
+  z-index: 5;
+  height: 9px;
+  border-top: 1px solid var(--line);
+  background-image: repeating-linear-gradient(90deg, var(--line-2) 0 1px, transparent 1px 10px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  opacity: 0.7;
+}
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width: 1100px) {
+  .hero__stage {
+    right: -26vw;
+    width: min(96vw, 780px);
+    opacity: 0.72;
+  }
+  .readout--tr, .readout--br { display: none; }
+  .readout--tl { top: 9%; right: 30%; }
+  .readout--bl { bottom: 20%; right: 6%; }
+}
+
+@media (max-width: 860px) {
+  .hero { min-height: auto; }
+  .hero__body {
+    grid-template-columns: 1fr;
+    padding-right: max(var(--gutter), calc((100vw - var(--page-max)) / 2 + var(--gutter)));
+  }
+  .hero__stage {
+    position: absolute;
+    top: 44%;
+    right: -34vw;
+    width: 118vw;
+    opacity: 0.45;
+    transform: translateY(-50%);
+  }
+  .hero__title { font-size: clamp(40px, 10.4vw, 64px); }
+  .gear__anno { display: none; }
+  .readout--bl { display: none; }
+  .readout--tl { top: 5%; right: max(var(--gutter), calc((100vw - var(--page-max)) / 2 + var(--gutter))); }
+  .hero__foot { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero__foot .stat { border-bottom: 1px solid var(--line); }
+  .hero__foot .stat:nth-child(2n) { border-right: 0; }
+  .hero__foot .stat:first-child,
+  .hero__foot .stat:nth-child(3) {
+    padding-left: max(var(--gutter), calc((100vw - var(--page-max)) / 2 + var(--gutter)));
+  }
+  .hero__foot .stat:nth-child(3),
+  .hero__foot .stat:nth-child(4) { border-bottom: 0; }
+  .hero__sys .sys-hide-sm { display: none; }
+}
+
+@media (max-width: 600px) {
+  .hero__title { font-size: clamp(34px, 10.8vw, 52px); letter-spacing: -0.03em; }
+  .hero__lead { font-size: var(--fs-base); }
+  .hero__stamp { width: 100%; }
+  .readout--tl { display: none; }
+  .hero__stage { right: -46vw; width: 150vw; opacity: 0.4; }
+}
