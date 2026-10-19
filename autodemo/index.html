@@ -38,12 +38,18 @@
     <p>每天早上 9 点，自动抓取竞品价格、比价、把变动整理成日报推进群里。以前手动翻页面半小时，现在 3.8 秒。</p>
   </div>
 
+  <div class="kpis">
+    <div class="kpi"><b>27<em>天</em></b><i>连续运行</i></div>
+    <div class="kpi"><b>99.2<em>%</em></b><i>运行成功率</i></div>
+    <div class="kpi"><b>11.4<em>小时</em></b><i>本月省下人工</i></div>
+  </div>
+
   <!-- 节点流程图 -->
   <div class="pipeline" id="pipe1">
     <div class="node" data-step="1">
       <span class="n-port n-port-l"></span>
       <span class="n-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.6V12l3.2 2"/></svg></span>
-      <span class="n-body"><b>定时触发</b><i>cron · 每天 09:00</i></span>
+      <span class="n-body"><b>定时触发</b><i>每天 09:00</i></span>
       <span class="n-read" data-read="1">待命</span>
       <span class="n-port n-port-r"></span>
     </div>
@@ -67,7 +73,7 @@
     <div class="node" data-step="4">
       <span class="n-port n-port-l"></span>
       <span class="n-ic"><svg viewBox="0 0 24 24"><path d="M20.5 3.5 10.8 13.2m0 0H15m-4.2 0H8.5L3.5 20.5"/><path d="M20.5 3.5 13 11"/></svg></span>
-      <span class="n-body"><b>推送日报</b><i>企微 / 钉钉 / 邮件</i></span>
+      <span class="n-body"><b>推送日报</b><i>企微 · 钉钉 · 邮件</i></span>
       <span class="n-read" data-read="4">待命</span>
       <span class="n-port n-port-r"></span>
     </div>
@@ -90,6 +96,13 @@
         </tbody>
       </table>
       <p class="panel-note">演示数据 · 真实场景抓取你的竞品店铺页面</p>
+      <div class="rules">
+        <div class="rb-h">判定规则</div>
+        <ul>
+          <li>变动 <b>≥ ¥5</b> 才进日报，其余静默</li>
+          <li>竞品低于我方 <b>20 元</b>以上 → 标红提醒</li>
+        </ul>
+      </div>
     </div>
 
     <!-- 右：推送结果（企微风） -->
@@ -98,13 +111,18 @@
         <span class="ph-t">推送结果 · 企微群消息</span>
         <span class="ph-m" id="clock1">未运行</span>
       </div>
+      <div class="speedup" id="speedup1" style="display:none">
+        <div class="sp-item"><b class="mono">30 分钟</b><i>人工翻页面比价</i></div>
+        <span class="sp-arrow">→</span>
+        <div class="sp-item sp-ok"><b class="mono">3.8 秒</b><i>这套流程</i></div>
+      </div>
       <div class="chat" id="chatCard1" style="display:none">
         <div class="chat-sender">
           <span class="chat-ava">价</span>
           <span class="chat-sender-tx"><b>价格小助手</b><i>机器人 · 今天 09:00</i></span>
         </div>
         <div class="chat-bubble">
-          <p class="cb-title">竞品价格日报 · 10-18</p>
+          <p class="cb-title">竞品价格日报 · <span data-today-md>--</span></p>
           <p class="cb-line"><span class="cb-dot cb-dot-up"></span>便携式榨汁杯 · 竞品 A 涨至 ¥129，我方 ¥119 保持优势</p>
           <p class="cb-line"><span class="cb-dot cb-dot-down"></span>降噪耳塞 · 竞品 B 降至 ¥179，低于我方 ¥20，建议关注</p>
           <p class="cb-line"><span class="cb-dot cb-dot-flat"></span>桌面暖风机 · 竞品 B 降 ¥15，暂不影响转化</p>
@@ -122,7 +140,7 @@
   <div class="console" id="console1">
     <div class="console-bar">
       <span class="cb-lights"><i></i><i></i><i></i></span>
-      <span class="console-title">执行日志 · run_20261018_0900</span>
+      <span class="console-title">执行日志 · run_<span data-today-ymd>--</span>_0900</span>
       <span class="console-state" id="cstate1">IDLE</span>
     </div>
     <div class="console-body" id="clog1">
@@ -153,6 +171,12 @@
     </div>
     <h1>表单自动回复</h1>
     <p>客户半夜在官网留了咨询。以前等早上人工回复，客户已经找了别家；现在分钟级回复，同时通知你跟进。</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><b>1,284<em>条</em></b><i>已自动回复</i></div>
+    <div class="kpi"><b>47<em>秒</em></b><i>客户平均等待</i></div>
+    <div class="kpi"><b>0<em>条</em></b><i>漏接线索</i></div>
   </div>
 
   <div class="pipeline" id="pipe2">
@@ -202,6 +226,20 @@
         <div class="lf-row lf-row-col"><span class="lf-k">咨询内容</span><span class="lf-v" id="fMsg">—</span></div>
         <div class="lf-row"><span class="lf-k">提交时间</span><span class="lf-v mono" id="fTime">—</span></div>
       </div>
+      <div class="leadstore" id="leadStore">
+        <div class="ls-head"><span>写入线索库</span><span class="ls-id" id="lsId">—</span></div>
+        <ul class="ls-list">
+          <li><span>手机号脱敏</span><b>138****6621</b></li>
+          <li><span>来源渠道</span><b>官网 · 咨询表单</b></li>
+          <li><span>补全字段</span><b>采购类型 / 数量 / 地区</b></li>
+          <li><span>跟进状态</span><b><span class="ls-tag">待跟进</span></b></li>
+        </ul>
+      </div>
+      <div class="leadlib">
+        <div class="lb-head">线索库 · 最近两条</div>
+        <div class="lb-row"><span class="lb-t">今天 14:20</span><span class="lb-n">李**</span><span class="lb-s">¥89 批发询价 · 300 个</span><span class="lb-ok">已回复</span></div>
+        <div class="lb-row"><span class="lb-t">昨天 22:47</span><span class="lb-n">张**</span><span class="lb-s">样品申请 · 顺丰到付</span><span class="lb-ok">已回复</span></div>
+      </div>
     </div>
 
     <!-- 右：回复邮件 -->
@@ -209,6 +247,11 @@
       <div class="panel-head">
         <span class="ph-t">自动回复 · 客户收到的邮件</span>
         <span class="ph-m" id="replyClock">未发送</span>
+      </div>
+      <div class="speedup" id="speedup" style="display:none">
+        <div class="sp-item"><b class="mono">4 小时</b><i>人工回复平均等待</i></div>
+        <span class="sp-arrow">→</span>
+        <div class="sp-item sp-ok"><b class="mono" id="spAuto">3 分钟</b><i>这套流程</i></div>
       </div>
       <div class="mail" id="mailCard" style="display:none">
         <div class="mail-head">
@@ -223,18 +266,13 @@
         <svg viewBox="0 0 24 24" class="re-ic"><rect x="3" y="5.5" width="18" height="13" rx="1.8"/><path d="M3.8 7l8.2 6 8.2-6"/></svg>
         <p>运行后，回复邮件会出现在这里</p>
       </div>
-      <div class="speedup" id="speedup" style="display:none">
-        <div class="sp-item"><b class="mono">4 小时</b><i>人工回复平均等待</i></div>
-        <span class="sp-arrow">→</span>
-        <div class="sp-item sp-ok"><b class="mono" id="spAuto">3 分钟</b><i>这套流程</i></div>
-      </div>
     </div>
   </div>
 
   <div class="console" id="console2">
     <div class="console-bar">
       <span class="cb-lights"><i></i><i></i><i></i></span>
-      <span class="console-title">执行日志 · run_lead_auto_reply</span>
+      <span class="console-title">执行日志 · run_<span data-today-ymd>--</span>_lead</span>
       <span class="console-state" id="cstate2">IDLE</span>
     </div>
     <div class="console-body" id="clog2">

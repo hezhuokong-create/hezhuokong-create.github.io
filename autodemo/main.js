@@ -15,6 +15,28 @@
     return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
   }
 
+  /* 日期注入：演示里的日期不能写死，否则隔一天就"过期"，一眼就假 */
+  function p2(n) { return String(n).padStart(2, '0'); }
+  function fillDates() {
+    var d = new Date();
+    var md = p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+    var ymd = d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate());
+    var t = new Date(d.getTime() + 86400000);
+    var nmd = p2(t.getMonth() + 1) + '-' + p2(t.getDate());
+    document.querySelectorAll('[data-today-md]').forEach(function (el) { el.textContent = md; });
+    document.querySelectorAll('[data-today-ymd]').forEach(function (el) { el.textContent = ymd; });
+    document.querySelectorAll('[data-next-md]').forEach(function (el) { el.textContent = nmd; });
+    return ymd;
+  }
+  var TODAY_YMD = fillDates();
+
+  /* 控制台滚到底后给顶部一条渐隐，避免首行被切在半行上 */
+  function markScrolled(box) {
+    box.scrollTop = box.scrollHeight;
+    if (box.scrollTop > 0) box.classList.add('is-scrolled');
+    else box.classList.remove('is-scrolled');
+  }
+
   /* 日志行：ts + 分级标签 + 内容 */
   function logLine(box, ts, level, text) {
     var dim = box.querySelector('.log-dim');
@@ -23,7 +45,7 @@
     line.className = 'log-line' + (level === 'done' ? ' log-final' : '');
     line.innerHTML = '<span class="ts">' + ts + '</span><span class="lv lv-' + level + '">' + level + '</span>' + text;
     box.appendChild(line);
-    box.scrollTop = box.scrollHeight;
+    markScrolled(box);
     return line;
   }
 
@@ -41,7 +63,9 @@
       document.querySelectorAll('#priceTable tbody tr').forEach(function (r) { r.classList.remove('scanned'); });
       $('chatCard1').style.display = 'none';
       $('empty1').style.display = '';
+      $('speedup1').style.display = 'none';
       $('clog1').innerHTML = '<div class="log-line log-dim">等待运行 · 点击下方按钮或滚动到此处自动执行</div>';
+      $('clog1').classList.remove('is-scrolled');
       $('cstate1').textContent = 'IDLE';
       $('cstate1').className = 'console-state';
       $('clock1').textContent = '未运行';
@@ -103,6 +127,7 @@
       await sleep(450);
       $('empty1').style.display = 'none';
       $('chatCard1').style.display = '';
+      $('speedup1').style.display = '';
       logLine(clog, '09:00:04', 'push', '日报已推送 · 企微群「运营小分队」');
       await sleep(800);
       nodes[3].classList.replace('is-run', 'is-done');
@@ -144,7 +169,10 @@
       $('mailCard').style.display = 'none';
       $('empty2').style.display = '';
       $('speedup').style.display = 'none';
+      $('leadStore').classList.remove('is-filled');
+      $('lsId').textContent = '—';
       $('clog2').innerHTML = '<div class="log-line log-dim">等待运行 · 点击下方按钮或滚动到此处自动执行</div>';
+      $('clog2').classList.remove('is-scrolled');
       $('cstate2').textContent = 'IDLE';
       $('cstate2').className = 'console-state';
       $('formClock').textContent = '等待提交';
@@ -212,11 +240,13 @@
       await sleep(800);
       nodes[1].classList.replace('is-run', 'is-done');
       reads[1].textContent = '已入库';
+      $('leadStore').classList.add('is-filled');
+      $('lsId').textContent = 'LEAD-' + TODAY_YMD.slice(4) + '-0412';
       wires[1].classList.add('flow');
 
       await sleep(250);
       nodes[2].classList.add('is-run');
-      logLine(clog, nowHMS(), 'ai', '生成回复 · 引用报价单 #2026-1018 · 0.6s');
+      logLine(clog, nowHMS(), 'ai', '生成回复 · 引用报价单 #' + TODAY_YMD + ' · 0.6s');
       await sleep(850);
       nodes[2].classList.replace('is-run', 'is-done');
       reads[2].textContent = '0.6s';
