@@ -8,18 +8,18 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='7' fill='%23BE3B2B'/%3E%3Ctext x='32' y='47' font-family='Georgia,serif' font-size='44' font-weight='700' fill='%23FAF6EE' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <!-- 字体自托管：latin 子集 + 静态实例化，9 个文件共 114KB
      原来是 fonts.googleapis.com —— 国内取不到会回退 Georgia，大标题的衬线对比度明显掉档 -->
-<link rel="preload" href="assets/fonts/playfair-700.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/playfair-600.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/playfair-500-italic.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/sourceserif-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/playfair-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/playfair-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/playfair-500-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/sourceserif-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 /* ============ 自托管字体（6 个静态文件，按需加载） ============ */
-@font-face{font-family:"Playfair Display";font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/playfair-600.woff2) format("woff2")}
-@font-face{font-family:"Playfair Display";font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/playfair-700.woff2) format("woff2")}
-@font-face{font-family:"Playfair Display";font-style:italic;font-weight:500;font-display:swap;src:url(assets/fonts/playfair-500-italic.woff2) format("woff2")}
-@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/sourceserif-400.woff2) format("woff2")}
-@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/sourceserif-600.woff2) format("woff2")}
-@font-face{font-family:"Source Serif 4";font-style:italic;font-weight:400;font-display:swap;src:url(assets/fonts/sourceserif-400-italic.woff2) format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:normal;font-weight:600;font-display:swap;src:url("/assets/fonts/playfair-600.woff2") format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:normal;font-weight:700;font-display:swap;src:url("/assets/fonts/playfair-700.woff2") format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:italic;font-weight:500;font-display:swap;src:url("/assets/fonts/playfair-500-italic.woff2") format("woff2")}
+@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:400;font-display:swap;src:url("/assets/fonts/sourceserif-400.woff2") format("woff2")}
+@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:600;font-display:swap;src:url("/assets/fonts/sourceserif-600.woff2") format("woff2")}
+@font-face{font-family:"Source Serif 4";font-style:italic;font-weight:400;font-display:swap;src:url("/assets/fonts/sourceserif-400-italic.woff2") format("woff2")}
 /* ============================================================
    设计定调 v2：杂志编辑风（Editorial）· 活力版
    - v1 的问题：全页一个底色、区块节奏一刀切、除入场外无动态——像一页纸
@@ -394,6 +394,9 @@ p{max-width:62ch}
 .footer .wordmark-sm{font-family:var(--font-display);font-size:var(--text-l);font-weight:700}
 .footer p{font-size:var(--text-xs);color:var(--color-ink-muted)}
 .footer .colophon{letter-spacing:.14em;text-transform:uppercase}
+.legal-nav{display:flex;gap:18px;flex-wrap:wrap}
+.legal-nav a{font-size:var(--text-xs);color:var(--color-ink-muted);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.18);padding-bottom:1px}
+.legal-nav a:hover{color:#fff;border-color:#fff}
 /* ============ 动效：入场 + 滚动揭示 ============ */
 .js .reveal{opacity:0;transform:translateY(22px)}
 .js .reveal.in{
@@ -678,6 +681,12 @@ p{max-width:62ch}
     <span class="wordmark-sm">SOPsmith<span class="dot" style="color:var(--color-accent)">.</span></span>
     <p class="colophon">Issue 01 · The 30-second skim</p>
     <p>Built for the 2026–27 application season · © 2026 SOPsmith</p>
+    <nav class="legal-nav" aria-label="Legal">
+      <a href="/terms.html">Terms</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/refund.html">Refunds</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
   </div>
 </footer>
 
